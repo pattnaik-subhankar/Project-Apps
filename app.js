@@ -15,7 +15,7 @@
   const BUY = [
     { cat: "⚡", item: "Power bank 20,000 mAh", pick: "Xiaomi Power Bank 4i 33W", price: "₹1,749", url: "https://www.amazon.in/dp/B0DCZ3WDTB" },
     { cat: "⚡", item: "Rechargeable lantern (5000mAh + solar)", pick: "UDee Camping Lantern", price: "~₹900", url: "https://www.amazon.in/dp/B0DQY4NMBD" },
-    { cat: "⚡", item: "Flashlight 1000 lm rechargeable", pick: "Cloyster LED Flashlight", price: "~₹800", url: "https://www.amazon.in/dp/B0DFQ5CTX4" },
+    { cat: "⚡", item: "Flashlight 1000 lm rechargeable", pick: "LED Tactical Torch (USB)", price: "~₹700", url: "https://www.amazon.in/dp/B0B66WNMGX" },
     { cat: "⚡", item: "Hand-crank radio + torch + power bank", pick: "Esky Solar Crank Radio", price: "~₹2,500", url: "https://www.amazon.in/dp/B01GRJZ1LK" },
     { cat: "⚡", item: "Headlamp 1000 lm", pick: "SLONIK CREE LED", price: "~₹1,200", url: "https://www.amazon.in/dp/B07D27L1NR" },
     { cat: "⚡", item: "20 W foldable solar panel", pick: "SUNGOOYUE USB", price: "₹5,998", url: "https://www.amazon.in/dp/B0C5MZ65M3" },
