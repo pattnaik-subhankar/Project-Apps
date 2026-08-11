@@ -11,6 +11,44 @@
   let current = null; // resolved city
   let plan = null;
 
+  /* ---------- quality buy list (Amazon.in direct product pages, Aug 2026) ---------- */
+  const BUY = [
+    { cat: "⚡", item: "Power bank 20,000 mAh", pick: "Xiaomi Power Bank 4i 33W", price: "₹1,749", url: "https://www.amazon.in/dp/B0DCZ3WDTB" },
+    { cat: "⚡", item: "Rechargeable lantern (5000mAh + solar)", pick: "UDee Camping Lantern", price: "~₹900", url: "https://www.amazon.in/dp/B0DQY4NMBD" },
+    { cat: "⚡", item: "Flashlight 1000 lm rechargeable", pick: "Cloyster LED Flashlight", price: "~₹800", url: "https://www.amazon.in/dp/B0DFQ5CTX4" },
+    { cat: "⚡", item: "Hand-crank radio + torch + power bank", pick: "Esky Solar Crank Radio", price: "~₹2,500", url: "https://www.amazon.in/dp/B01GRJZ1LK" },
+    { cat: "⚡", item: "Headlamp 1000 lm", pick: "SLONIK CREE LED", price: "~₹1,200", url: "https://www.amazon.in/dp/B07D27L1NR" },
+    { cat: "⚡", item: "20 W foldable solar panel", pick: "SUNGOOYUE USB", price: "₹5,998", url: "https://www.amazon.in/dp/B0C5MZ65M3" },
+    { cat: "⚡", item: "AA batteries (10)", pick: "Duracell Alkaline", price: "~₹550", url: "https://www.amazon.in/dp/B0GV7HYCQX" },
+    { cat: "💧", item: "20 L water drum with tap", pick: "Heavy-duty water jar", price: "~₹800", url: "https://www.amazon.in/dp/B0FBL3KQZL" },
+    { cat: "💧", item: "5 L water containers", pick: "BESPORTBLE PC bucket", price: "~₹500", url: "https://www.amazon.in/dp/B092M5D542" },
+    { cat: "💧", item: "Water purification tablets", pick: "Aquatabs 49mg (30)", price: "~₹400", url: "https://www.amazon.in/dp/B07DTSRB6S" },
+    { cat: "🍳", item: "Butane camping stove (with cylinder)", pick: "2800 W portable stove", price: "₹499", url: "https://www.amazon.in/dp/B0DPCJ6GZL" },
+    { cat: "🍳", item: "Butane canisters 220g (3-pack)", pick: "SHoRI high-pressure", price: "₹420", url: "https://www.amazon.in/dp/B0F63HVBLP" },
+    { cat: "🍚", item: "Milk powder 1 kg", pick: "Nestlé Everyday", price: "₹615", url: "https://www.amazon.in/dp/B00NYZQX9A" },
+    { cat: "🍚", item: "Energy bars (10-pack)", pick: "Yogabar Chocolate Chunk", price: "₹249", url: "https://www.amazon.in/dp/B00STGUN54" },
+    { cat: "🍚", item: "Canned fish (4 tins)", pick: "Golden Prize Sardine", price: "~₹700", url: "https://www.amazon.in/dp/B0GCWSVQD5" },
+    { cat: "🩹", item: "First aid kit (200 pcs)", pick: "Hospital-grade kit", price: "~₹600", url: "https://www.amazon.in/dp/B08CB1V4CH" },
+    { cat: "🩹", item: "BP monitor", pick: "Omron HEM 7120", price: "₹1,849", url: "https://www.amazon.in/dp/B0DB5D2HK2" },
+    { cat: "🩹", item: "ORS sachets (30)", pick: "Electral 21.8g", price: "₹598", url: "https://www.amazon.in/dp/B0CKVW61BH" },
+    { cat: "🩹", item: "Weekly pill organizer (28 slots)", pick: "JimXen moisture-proof", price: "₹299", url: "https://www.amazon.in/dp/B098LX956V" },
+    { cat: "🩹", item: "N95 masks (10)", pick: "3M 9502+", price: "₹536", url: "https://www.amazon.in/dp/B09PBZFRWZ" },
+    { cat: "🛠️", item: "Fire extinguisher 2 kg ABC + mount", pick: "SAFE PRO", price: "~₹1,100", url: "https://www.amazon.in/dp/B082R1XQJ8" },
+    { cat: "🛠️", item: "Smoke alarm (10-yr battery)", pick: "Kidde photoelectric", price: "~₹1,700", url: "https://www.amazon.in/dp/B0CT3W1WPM" },
+    { cat: "🛠️", item: "Multitool 15-in-1 + sheath", pick: "AmazonBasics", price: "₹683", url: "https://www.amazon.in/dp/B07TP4WPGD" },
+    { cat: "🛠️", item: "Duct tape heavy duty", pick: "AIPL waterproof", price: "₹168", url: "https://www.amazon.in/dp/B0D5R71FTN" },
+    { cat: "🛠️", item: "Folding shovel", pick: "UDee entrenching tool", price: "~₹900", url: "https://www.amazon.in/dp/B0B51ST617" },
+    { cat: "🛠️", item: "Tarp 3×3 m waterproof", pick: "SHANNA heavy duty", price: "~₹600", url: "https://www.amazon.in/dp/B0DGL3QVNM" },
+    { cat: "🛠️", item: "Nylon rope 10 m × 10 mm", pick: "BSPS industrial-grade", price: "~₹350", url: "https://www.amazon.in/dp/B0BSNRWJD8" },
+    { cat: "🛠️", item: "Sandbags (10)", pick: "Carrywell UV-protected", price: "~₹1,100", url: "https://www.amazon.in/dp/B0BVT9Y1D3" },
+    { cat: "🛠️", item: "Cut-resistant gloves (pair)", pick: "Schwer ProGuard A9", price: "~₹1,300", url: "https://www.amazon.in/dp/B09N6LLDCR" },
+    { cat: "🛠️", item: "Emergency whistle 7-in-1 kit", pick: "TrekEaze (LED + compass)", price: "₹224", url: "https://www.amazon.in/dp/B0CHJZDP7W" },
+    { cat: "📄", item: "Waterproof A4 document pouch", pick: "ERITIN zipper pouch", price: "~₹250", url: "https://www.amazon.in/dp/B0FHLP88CC" },
+    { cat: "🚗", item: "Car jumper cables 1000 A", pick: "AJIGNA copper-coated", price: "₹473", url: "https://www.amazon.in/dp/B0H6F5SJQ9" },
+    { cat: "🔋", item: "Inverter 900 VA pure sinewave", pick: "Luminous Zelio+ 1100", price: "₹6,389", url: "https://www.amazon.in/dp/B01994DUMW" },
+    { cat: "🔋", item: "Inverter + battery + trolley combo", pick: "Luminous Zelio 1100 + RC25000", price: "₹22,399", url: "https://www.amazon.in/dp/B09JSW7KSD" },
+  ];
+
   /* ---------- location resolution ---------- */
   function norm(s) { return (s || "").toLowerCase().replace(/[^a-z0-9]/g, ""); }
   function resolveCity(q) {
@@ -284,12 +322,21 @@
         </div>
         <p class="note">Practice 2 techniques per week — filter + ORS first. Ten minutes of practice beats an hour of reading during a disaster.</p>`,
       shop: () => `
-        <div class="tiers">
-          <div class="tier"><h4>₹5,000 · STARTER (week 1)</h4>${ul(["2× 20,000 mAh power banks", "2 lanterns + 2 torches", "Crank radio", "First aid kit + top-ups", "Aquatabs + 5× 5L bottles", "2-week dry food", "Whistles ×4, duct tape, matches", "Waterproof pouch"])}</div>
-          <div class="tier"><h4>₹15,000 · FAMILY (month 1)</h4>${ul(["All starter items", "20 W solar panel", "Butane stove + 8 cylinders", "8× 20 L drums", "Multitool + rope + tarp", "Fire extinguisher + smoke alarm", "BP monitor + pill organizer", "Batteries, masks, gloves"])}</div>
-          <div class="tier"><h4>₹30,000 · COMPLETE (month 2)</h4>${ul(["All family items", "Inverter/UPS + battery", "10 sandbags + shovel", "12 cans protein + milk powder", "Car emergency kit", "Window boards + brackets", "Extra lanterns + headlamps", "2-week medicine buffer"])}</div>
+        <p class="note"><b>Quality bar:</b> known brands, 3.8★+, mid-range value picks — no cheap junk. Prices ≈ Aug 2026; always check the live price before buying.</p>
+        <div class="buy-wrap">
+          <table class="buy-table">
+            <thead><tr><th>Item</th><th>Quality pick</th><th>~Price</th><th></th></tr></thead>
+            <tbody>
+              ${BUY.map(b => `<tr><td class="bi">${b.cat} ${b.item}</td><td>${b.pick}</td><td class="pr">${b.price}</td><td><a class="buy" target="_blank" rel="noopener" href="${b.url}">Buy →</a></td></tr>`).join("")}
+            </tbody>
+          </table>
         </div>
-        <p class="note">Find products: <b>amazon.in/s?k=&lt;item&gt;</b> and <b>flipkart.com/search?q=&lt;item&gt;</b>. Compare 2–3, take the mid-range. Search links never rot; prices stay live.</p>`,
+        <div class="tiers">
+          <div class="tier"><h4>₹5,000 · STARTER (week 1)</h4>${ul(["2× Xiaomi power banks", "UDee lantern + Cloyster flashlight", "Esky crank radio", "First aid kit + Aquatabs + bottles", "2-week dry food + Yogabar", "Whistles, duct tape, pouch"])}</div>
+          <div class="tier"><h4>₹15,000 · FAMILY (month 1)</h4>${ul(["Starter items + SUNGOOYUE solar panel", "Butane stove + SHoRI canisters", "8× 20 L drums", "AmazonBasics multitool + rope + tarp", "SAFE PRO extinguisher + Kidde alarm", "Omron BP monitor + pill organizer"])}</div>
+          <div class="tier"><h4>₹30,000 · COMPLETE (month 2)</h4>${ul(["Family items + Luminous inverter combo", "10 sandbags + UDee shovel", "Golden Prize cans + Everyday powder", "Car jumper cables + glovebox kit", "Window boards + brackets", "2-week medicine buffer + 3M masks"])}</div>
+        </div>
+        <p class="note">Links open Amazon.in product pages directly. Prices move — the table is a shopping guide, not a quote.</p>`,
       calendar: () => `
         <div class="weeks">
           <div class="week"><h4>WEEK 1 · BASICS (₹5k)</h4>${ul(["Day 1: scan & upload documents", "Day 2: power banks + lanterns + radio", "Day 3: first aid kit + tablets + bottles", "Day 4: stock 2-week pantry", "Day 5: waterproof pouch + cash", "Day 6: family plan + save 112", "Day 7: book first aid class"])}</div>
