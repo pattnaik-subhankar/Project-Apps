@@ -70,7 +70,7 @@ h1 { font-family: var(--serif); font-size: clamp(32px, 4.6vw, 50px); line-height
 /* layout */
 .plan-layout { display: block; }
 .tabs {
-  display: flex; flex-direction: row; gap: 8px;
+  display: flex; flex-direction: row; flex-wrap: nowrap; gap: 8px;
   overflow-x: auto; padding: 10px 2px 12px;
   position: sticky; top: 63px; z-index: 5;
   background: var(--paper);
