@@ -1,0 +1,72 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReadyHome India — Location-based Disaster Preparedness Plan Generator</title>
+<meta name="description" content="Type your location in India and get a complete, personalized disaster preparedness plan: risk profile, water, food, power, first aid, go-bags, home hardening, DIY techniques, shopping list and a 30-day build calendar.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="inner">
+    <div class="brand">
+      <div class="brand-mark">🏠</div>
+      <div><div class="brand-name">ReadyHome India</div><div class="brand-sub">Disaster preparedness, personalised</div></div>
+    </div>
+    <nav>
+      <button id="printBtn" class="btn ghost">🖨 Print / PDF</button>
+      <button id="dlBtn" class="btn ghost">⬇ Plan (.md)</button>
+      <button id="resetBtn" class="btn ghost">↺ Reset</button>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="inner">
+    <div class="eyebrow">Cyclones · Floods · Heatwaves · Earthquakes · Power outages</div>
+    <h1>Your city. Your risks. <br>A complete preparedness plan in seconds.</h1>
+    <p class="lede">Type any major Indian city — ReadyHome maps its real disaster profile (cyclone, flood, seismic zone, heatwave) and builds the full plan: what to stock, what to do in the first 72 hours, how to harden your home, and how to protect your family — including elderly parents.</p>
+
+    <div class="search-box">
+      <input id="locInput" type="text" placeholder="Type your city — e.g. Bhubaneswar, Chennai, Patna…" autocomplete="off">
+      <button id="goBtn" class="btn primary">Generate plan →</button>
+      <button id="geoBtn" class="btn ghost">📍 Use my location</button>
+      <div id="suggestions" class="hidden"></div>
+    </div>
+    <p class="note">45+ Indian cities covered · profiles from IMD / NDMA / BIS zone maps · for exact decisions, official government sources remain authoritative</p>
+  </div>
+</section>
+
+<section id="planView" class="hidden">
+  <div class="inner">
+    <div id="resultHead"></div>
+
+    <div class="progress">
+      <div class="prog-row"><span id="progTxt">Preparedness: 0%</span><span>checklists save automatically</span></div>
+      <div class="prog-track"><div id="progBar"></div></div>
+    </div>
+
+    <div class="plan-layout">
+      <nav id="tabs" class="tabs"></nav>
+      <div class="panel">
+        <h3 id="secTitle"></h3>
+        <div id="secBody"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="inner">
+    <b>ReadyHome India</b> · a venture under the project-agents repository · Built Aug 2026.
+    <br>Risk profiles are indicative (IMD/NDMA/BIS zone maps, state disaster records). Always follow official evacuation orders — <b>112</b> for any emergency, <b>1078</b> for disasters. Nothing here replaces government advisories.
+  </div>
+</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
+
