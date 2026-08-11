@@ -1,4 +1,4 @@
-/* ReadyHome India — grounded light theme (warm paper + terracotta/saffron/forest) */
+﻿/* ReadyHome India â€” grounded light theme (warm paper + terracotta/saffron/forest) */
 :root {
   --paper: #f7f3ec; --paper-2: #efe9de; --card: #fffdf8;
   --ink: #22201c; --ink-soft: #5c564c; --ink-faint: #8a8274;
@@ -166,7 +166,27 @@ ul.chk { list-style: none; }
 .tier ul, .week ul { padding-left: 18px; font-size: 13px; color: var(--ink-soft); }
 .tier li, .week li { margin: 5px 0; }
 
-footer { margin-top: 60px; border-top: 1px solid var(--line); background: var(--paper-2); padding: 30px 0 36px; font-size: 12.5px; color: var(--ink-faint); line-height: 1.7; }
+/* how-to guide (numbered step cards, sample-exact format) */
+.howto { padding: 44px 0 10px; }
+.howto-title { font-family: var(--serif); font-size: clamp(24px, 3vw, 34px); font-weight: 700; margin-bottom: 24px; }
+.guide-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 900px) { .guide-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .guide-grid { grid-template-columns: 1fr; } }
+.gcard { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); padding: 0 0 14px; }
+.gcard.wide { grid-column: 1 / -1; display: grid; grid-template-columns: 220px 1fr; align-items: center; gap: 16px; padding: 12px; }
+@media (max-width: 560px) { .gcard.wide { grid-template-columns: 1fr; } }
+.gcard img { width: 100%; height: 150px; object-fit: cover; display: block; }
+.gcard.wide img { height: 130px; }
+.gnum { position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; border-radius: 50%; background: var(--terra); color: #fff; font-weight: 800; display: grid; place-items: center; font-size: 15px; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
+.gcard.wide .gnum { top: auto; left: auto; }
+.gcard b { display: block; padding: 10px 14px 0; font-size: 14.5px; }
+.gcard.wide b { padding-top: 0; }
+.glabel { display: block; padding: 3px 14px 0; font-size: 12.5px; color: var(--ink-faint); line-height: 1.5; }
+
+/* footer */
+footer {
+  margin-top: 60px; border-top: 1px solid var(--line); background: var(--paper-2); padding: 30px 0 36px; font-size: 12.5px; color: var(--ink-faint); line-height: 1.7;
+}
 footer b { color: var(--ink-soft); }
 
 /* print */
