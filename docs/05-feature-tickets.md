@@ -79,7 +79,9 @@ Legend: **P0** shipped · **P1** next · **P2** later. Format: user story → ac
 - [x] OSM embed map card in the Overview panel (no API key, lazy-loaded)
 - [x] One-click "find cyclone shelters near <city>" on OSM + Google Maps
 - [x] District control room reminder (shelter availability changes by season)
-- [ ] (next) curated shelter coordinates per city + offline fallback table
+- [x] Curated help-point coordinates for 62 cities (322 points: cyclone/emergency shelters, hospitals, fire stations, police) from OSM Overpass (2026-08-12)
+- [x] Leaflet map with city + help-point markers (key-free OSM tiles); offline point table fallback
+- [ ] (next) Amritsar retry + district-level cyclone shelter datasets from state agencies
 
 ---
 

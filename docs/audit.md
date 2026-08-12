@@ -69,3 +69,11 @@ New known limitation: CAP feed warnings are state-level text matches; district-l
 - **Map & shelter card (T-RH-104 partial)** — OSM embed in Overview (no API key, lazy), shelter search links (OSM + Google Maps), district-control-room reminder.
 - **Shareable deep links** — plans live at `#plan/<city>` (replaceState, deep-linkable + refresh-safe); 🔗 Link (clipboard copy) and 📲 Share (WhatsApp) buttons added to the topbar.
 - Section counts unchanged (map lives inside Overview).
+
+## Addendum v1.3 (2026-08-12) — curated coordinates
+
+- **Help-point coordinates shipped (T-RH-104 complete)**: 62 cities · 322 verified points from OSM Overpass (cyclone/emergency shelters, hospitals, fire stations, police; nearest-4 per category; 31.5 KB static shelters.js, precached offline).
+- **Leaflet map** (key-free OSM tiles) in the Overview card: city marker + help-point markers with popups (name, category, distance), auto-fit bounds; offline → static point table + OSM links. Amritsar has no points yet (Overpass timeout) → graceful fallback.
+- SW bumped to 
+eadyhome-v3 (shelters.js precached).
+- Process note: the original background curation job was killed by a session error mid-run (55/65 cities); resumed with a resumable script + mirror fallback (overpass-api.de → kumi.systems → private.coffee) and fixed an OSM node field bug (lon, not lng).

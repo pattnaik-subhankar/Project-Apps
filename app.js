@@ -216,17 +216,42 @@
   }
 
   function mapCard(c) {
+    const pts = (window.SHELTERS || {})[c.n] || [];
     const padLng = 0.22, padLat = 0.18;
     const embed = `https://www.openstreetmap.org/export/embed.html?bbox=${c.lng - padLng},${c.lat - padLat},${c.lng + padLng},${c.lat + padLat}&layer=mapnik&marker=${c.lat},${c.lng}`;
+    const icons = { "Cyclone shelter": "🔺", "Emergency shelter": "🏠", "Hospital": "🏥", "Fire station": "🚒", "Police": "👮" };
+    const rows = pts.slice(0, 8).map(p => `<div class="pt-row"><span class="pt-ic">${icons[p.cat] || "📍"}</span><b>${p.n}</b><span class="pt-meta">${p.cat} · ${p.d} km</span><a href="https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lng}#map=17/${p.lat}/${p.lng}" target="_blank" rel="noopener">map ↗</a></div>`).join("");
     return `<div class="mapcard">
       <div class="map-head"><b>🗺️ Map & shelter view</b><a href="${embed}" target="_blank" rel="noopener">Open in OSM ↗</a></div>
-      <iframe class="mapframe" loading="lazy" src="${embed}" title="Map of ${c.n}, ${c.s}"></iframe>
+      <div class="mapframe" id="leafletMap" data-lat="${c.lat}" data-lng="${c.lng}" data-city="${c.n}"></div>
+      ${pts.length ? `<div class="pt-table"><div class="pt-head"><b>Verified help points near ${c.n}</b><span>${pts.length} · OSM data</span></div>${rows}</div>` : `<p class="note">No verified help points near ${c.n} yet — use the shelter search links below.</p>`}
       <div class="map-links">
         <a href="https://www.openstreetmap.org/search?query=cyclone%20shelter%20near%20${encodeURIComponent(c.n)}" target="_blank" rel="noopener">Find cyclone shelters near ${c.n} (OSM)</a>
         <a href="https://www.google.com/maps/search/cyclone+shelter+${encodeURIComponent(c.n)}" target="_blank" rel="noopener">Google Maps</a>
       </div>
-      <p class="note">Shelter availability changes with the season — confirm with your district control room before an emergency. ${c.emg || ""}</p>
+      <p class="note">Help points are curated from OpenStreetMap (2026-08). Shelter availability changes with the season — confirm with your district control room before an emergency. ${c.emg || ""}</p>
     </div>`;
+  }
+  function initLeaflet() {
+    if (typeof L === "undefined" || !plan) return;
+    const el = document.getElementById("leafletMap");
+    if (!el || el._leafletInit) return;
+    const c = plan.city;
+    const lat = +el.dataset.lat, lng = +el.dataset.lng;
+    const m = L.map(el, { scrollWheelZoom: false }).setView([lat, lng], 12);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(m);
+    L.marker([lat, lng]).addTo(m).bindPopup("<b>" + c.n + "</b>");
+    const pts = (window.SHELTERS || {})[c.n] || [];
+    const icons = { "Cyclone shelter": "🔺", "Emergency shelter": "🏠", "Hospital": "🏥", "Fire station": "🚒", "Police": "👮" };
+    pts.forEach(p => {
+      L.marker([p.lat, p.lng]).addTo(m).bindPopup("<b>" + p.n + "</b><br>" + p.cat + " · " + p.d + " km");
+    });
+    if (pts.length > 1) {
+      const bounds = L.latLngBounds(pts.map(p => [p.lat, p.lng]));
+      bounds.extend([lat, lng]);
+      m.fitBounds(bounds, { padding: [28, 28] });
+    }
+    el._leafletInit = true;
   }
 
   /* ---------- kit & expiry tracker ---------- */
@@ -629,6 +654,7 @@
     $("secTitle").textContent = sec.icon + "  " + sec.title;
     $("secBody").innerHTML = plan.content[id]();
     if (id === "kit") renderKit();
+    if (id === "overview") initLeaflet();
     $("secBody").querySelectorAll("input[data-chk]").forEach(cb => cb.onchange = () => {
       const saved = store.get("chk_" + cb.dataset.chk, {});
       saved[cb.id] = cb.checked;
