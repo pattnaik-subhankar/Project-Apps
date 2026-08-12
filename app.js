@@ -271,8 +271,8 @@
           areas: null,
           link: (it.querySelector("link") || {}).textContent || "",
         };
-        const t = item.date ? new Date(item.date).getTime() : NaN;
-        if (!isNaN(t) && (now - t) > 72 * 3600000) continue; // skip stale before detail fetch
+        const ts = item.date ? new Date(item.date).getTime() : NaN;
+        if (!isNaN(ts) && (now - ts) > 72 * 3600000) continue; // skip stale before detail fetch
         if (item.link && item.link.endsWith(".xml")) {
           try {
             const cap = await (await fetch(item.link)).text();
@@ -317,8 +317,8 @@
     const seen = new Set();
     const hits = [];
     for (const a of alertsCache) {
-      const t = a.date ? new Date(a.date).getTime() : NaN;
-      if (!isNaN(t) && (now - t) > 72 * 3600000) continue; // only recent warnings
+      const ts = a.date ? new Date(a.date).getTime() : NaN;
+      if (!isNaN(ts) && (now - ts) > 72 * 3600000) continue; // only recent warnings
       const areaHit = areaHits(a, stateTok, cityTok);
       const hay = norm(a.title + " " + a.desc);
       const textHit = (stateTok && hay.includes(stateTok)) || (cityTok && hay.includes(cityTok));
