@@ -1,0 +1,15 @@
+{
+  "name": "ReadyHome India — Disaster Preparedness Plans",
+  "short_name": "ReadyHome",
+  "description": "Type your city and get a complete, personalized disaster preparedness plan: risk profile, water, food, power, first aid, go-bags, shopping and a 30-day build calendar. Works offline.",
+  "lang": "en-IN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f3ec",
+  "theme_color": "#b4501f",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

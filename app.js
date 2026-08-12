@@ -11,6 +11,38 @@
   let current = null; // resolved city
   let plan = null;
 
+  /* ---------- curated video guides (YouTube, verified 2026-08) ---------- */
+  const VIDEOS = {
+    firstaid: { id: "BQNNOh8c8ks", t: "How to do CPR on an Adult", b: "St John Ambulance" },
+    water: { id: "11qohzGPDzg", t: "Best Ways to Purify Water", b: "Warrior Poet Society" },
+    tools: { id: "kCFRQHAxFys", t: "How to Tie a Bowline Knot", b: "How To Boating" },
+    cooking: { id: "5kG9xxeU3UE", t: "Rocket Stove from Tin Cans", b: "The Lokey Lab" },
+    harden: { id: "xNwo_a57KGc", t: "Safety From Cyclones While Indoors", b: "NDMA India" },
+    quake: { id: "-MKMiFWK6Xk", t: "Drop, Cover & Hold On", b: "San Jose Fire Dept" },
+    heat: { id: "jvGC_dQJUtE", t: "How to Treat Heat Stroke", b: "St John Ambulance" },
+    flood: { id: "pi_nUPcQz_A", t: "How To Survive Floods?", b: "Dr Binocs Show" },
+    gobags: { id: "4tfjFgZo2zo", t: "Build a 72-Hour Go-Bag", b: "365 Survival Things" },
+  };
+  function videoCard(k) {
+    const v = VIDEOS[k];
+    if (!v) return "";
+    return `<a class="vidcard" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener" aria-label="Watch: ${v.t} on YouTube">
+        <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy" width="160" height="90">
+        <span class="vplay">▶</span>
+        <span class="vinfo"><b>Watch: ${v.t}</b><i>${v.b} · opens YouTube</i></span>
+      </a>`;
+  }
+  function telLinks(s) {
+    if (!s) return "";
+    return s.split("·").map(function (part) {
+      part = part.trim();
+      const m = part.match(/(\d[\d\s-]{5,})$/);
+      if (!m) return part;
+      const num = m[1].replace(/[^0-9]/g, "");
+      return part.slice(0, m.index).trim() + ' <a href="tel:' + num + '">' + m[1].trim() + "</a>";
+    }).join(" · ");
+  }
+
   /* ---------- quality buy list (Amazon.in direct product pages, Aug 2026) ---------- */
   const BUY = [
     { cat: "⚡", item: "Power bank 20,000 mAh", pick: "Xiaomi Power Bank 4i 33W", price: "₹1,749", url: "https://www.amazon.in/dp/B0DCZ3WDTB" },
@@ -152,8 +184,12 @@
         <div class="callout"><b>How this plan adapts:</b> ${adaptLine(c)}</div>`,
       numbers: () => `
         <div class="emg-grid">
-          ${NATIONAL_EMG.map(e => `<div class="emg-card"><b>${e[0]}</b><span>${e[1]}</span></div>`).join("")}
-          ${c.emg ? `<div class="emg-card wide"><b>${c.emg.split("·")[0].trim()}</b><span>${c.emg.split("·").slice(1).join(" · ").trim() || "State emergency contact"}</span></div>` : ""}
+          ${NATIONAL_EMG.map(e => `<div class="emg-card"><b><a href="tel:${e[0]}">${e[0]}</a></b><span>${e[1]}</span></div>`).join("")}
+          ${c.emg ? `<div class="emg-card wide"><b>${c.emg.split("·")[0].trim()}</b><span>${telLinks(c.emg.split("·").slice(1).join(" · ").trim()) || "State emergency contact"}</span></div>` : ""}
+        </div>
+        <div class="callrow">
+          <a class="callbtn" href="tel:112">📞 Call 112</a>
+          <a class="callbtn" href="tel:1078">📞 NDMA 1078</a>
         </div>
         <p class="note">Save <b>112</b> as ICE on every family phone. Print this section and pin it near the door. Phones die in disasters — paper doesn't.</p>`,
       family: () => checklist("family", [
@@ -189,6 +225,7 @@
           "Rainwater catch: clean drum under downpipe with cloth mesh (washing, not drinking)",
           "After floods: assume EVERY source is contaminated. Boil or tablet everything.",
         ])}
+        ${videoCard("water")}
         </div><div class="imgbox"><img src="assets/water.jpg" alt="Water storage"><div class="price">🛒 20L drums ×8 (~₹350 each) · Aquatabs 30-pack (~₹250) · gravity filter (~₹1,200) — <a href="https://www.amazon.in/s?k=20+litre+water+storage+drum" target="_blank">Amazon</a> · <a href="https://www.flipkart.com/search?q=water+purification+tablets" target="_blank">Flipkart</a></div></div></div>`,
       food: () => `
         <div class="two"><div>
@@ -212,6 +249,7 @@
           "SAFETY: never cook indoors with charcoal/wood (CO poisoning); butane in ventilated rooms",
           "Pressure cooker (fuel-efficient), manual can opener, matches in waterproof box",
         ])}
+        ${videoCard("cooking")}
         </div><div class="imgbox"><img src="assets/cooking-nopower.jpg" alt="Cooking without power"><div class="price">🛒 Stove ~₹1,000–1,500 · cylinders ~₹180–250 — <a href="https://www.amazon.in/s?k=portable+butane+camping+stove" target="_blank">Amazon</a> · <a href="https://www.flipkart.com/search?q=butane+gas+stove" target="_blank">Flipkart</a></div></div></div>`,
       power: () => `
         <div class="two"><div>
@@ -235,6 +273,7 @@
           "Heatstroke: shade, cool water, fan, ORS; emergency if confused/unconscious",
           "Print a CPR chart; tape inside the first aid box lid. Take a 2-hr class.",
         ])}
+        ${videoCard("firstaid")}
         </div><div class="imgbox"><img src="assets/firstaid.jpg" alt="First aid kit"><div class="price">🛒 <a href="https://www.amazon.in/s?k=family+first+aid+kit" target="_blank">Amazon kit</a> · <a href="https://www.flipkart.com/search?q=first+aid+box" target="_blank">Flipkart</a></div></div></div>`,
       health: () => `
         <div class="two"><div>
@@ -255,7 +294,7 @@
         "Shovel + 10 sandbags (flood season)",
         "2 kg ABC fire extinguisher (~₹1,000) + smoke alarm (~₹400)",
         "Work gloves, safety goggles, N95 masks",
-      ]),
+      ]) + videoCard("tools"),
       gobags: () => checklist("gobags", [
         "Each bag (≤8 kg): 3 L water, 3-day food, change of clothes, blanket, torch, whistle, power bank",
         "Adult add-ons: ₹2,000 cash, ID copies, pocket multitool, N95 masks",
@@ -263,7 +302,7 @@
         "Common bag: documents pouch, first aid kit, ₹5,000 cash, chargers, rope, tarp",
         "Car kit: 10 L water, blanket, tool kit, jumper cables, flashlight",
         "Check bags on the 1st of every month; swap expired food",
-      ]),
+      ]) + videoCard("gobags"),
       harden: () => checklist("harden", [
         "Board windows with 12 mm plywood + screws (pre-cut, stored)",
         "Reinforce roof; fix leaks before the season",
@@ -272,7 +311,7 @@
         "Sandbags at the door + clear roof drains/gutters before monsoon",
         "Know the main breaker; licensed wiring check before cyclone season",
         "Check home insurance covers cyclone/flood damage",
-      ]),
+      ]) + videoCard("harden"),
       quake: () => `
         <div class="two"><div>
         ${checklist("quake", [
@@ -284,6 +323,7 @@
           "NOW: secure bookshelves, TV, wardrobes to walls; heavy items off high shelves",
           "Zone ${c.quake} buildings: modern RCC is engineered for the zone — inside is safer than outside",
         ])}
+        ${videoCard("quake")}
         </div><div class="imgbox"><img src="assets/earthquake-drill.jpg" alt="Earthquake drill"><div class="price">30-minute task: practice the drill with parents until automatic — twice a year.</div></div></div>`,
       heat: () => checklist("heat", [
         "No outdoor activity 11 AM–4 PM; coolest room + fan (inverter = heat insurance)",
@@ -291,7 +331,7 @@
         "Home cooling without power: cross-ventilation at night, wet curtain, shade cloth on west windows",
         "Recognize heatstroke: hot dry skin, confusion, rapid pulse → cool immediately + call 112",
         "Store: 24 ORS packets, battery fans, ice packs; check parents every 2 hrs on red-alert days",
-      ]),
+      ]) + videoCard("heat"),
       flood: () => checklist("flood", [
         "Sandbags at doors, valuables raised 1 ft+, vehicles to high ground, drains cleared",
         "NEVER walk/drive through moving water: 15 cm knocks you over, 60 cm floats a car",
@@ -299,7 +339,7 @@
         "If water enters: power off first, move to a higher floor",
         "After: purify all water; check for snakes; disinfect floors/walls",
         "Know two exits from your area; keep the car above half fuel always",
-      ]),
+      ]) + videoCard("flood"),
       docs: () => checklist("docs", [
         "Scan NOW: Aadhaar/PAN ×4, passports, bank, insurance, property papers, education certificates, prescriptions",
         "Store 3 ways: Google Drive/email · USB in go-bag · printed in waterproof pouch",
@@ -491,6 +531,9 @@
     renderSuggestions("");
     // default: Bhubaneswar (home)
     generate("Bhubaneswar");
+    if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    }
   }
 
   document.addEventListener("DOMContentLoaded", init);

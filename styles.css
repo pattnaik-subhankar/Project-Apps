@@ -183,6 +183,23 @@ ul.chk { list-style: none; }
 .gcard.wide b { padding-top: 0; }
 .glabel { display: block; padding: 3px 14px 0; font-size: 12.5px; color: var(--ink-faint); line-height: 1.5; }
 
+/* video guide cards */
+.vidcard { display: flex; align-items: center; gap: 10px; margin: 12px 0 4px; padding: 8px 10px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--paper); text-decoration: none; transition: box-shadow .15s, transform .15s; position: relative; }
+.vidcard:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+.vidcard img { width: 128px; height: 72px; object-fit: cover; border-radius: 8px; flex: none; }
+.vplay { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border-radius: 50%; background: rgba(0,0,0,.55); color: #fff; display: grid; place-items: center; font-size: 13px; }
+.vinfo { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.vinfo b { font-size: 13px; color: var(--ink); line-height: 1.35; }
+.vinfo i { font-size: 11.5px; color: var(--ink-faint); font-style: normal; }
+
+/* one-tap helplines */
+.callrow { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0 4px; }
+.callbtn { flex: 1 1 160px; text-align: center; padding: 10px 12px; border-radius: 10px; font-weight: 700; font-size: 13.5px; text-decoration: none; background: var(--forest); color: #fff; }
+.callbtn:hover { filter: brightness(1.06); }
+.callbtn + .callbtn { background: var(--terra); }
+.emg-card a { color: var(--ocean); font-weight: 700; text-decoration: none; }
+.emg-card a:hover { text-decoration: underline; }
+
 /* footer */
 footer {
   margin-top: 60px; border-top: 1px solid var(--line); background: var(--paper-2); padding: 30px 0 36px; font-size: 12.5px; color: var(--ink-faint); line-height: 1.7;
