@@ -77,3 +77,8 @@ New known limitation: CAP feed warnings are state-level text matches; district-l
 - SW bumped to 
 eadyhome-v3 (shelters.js precached).
 - Process note: the original background curation job was killed by a session error mid-run (55/65 cities); resumed with a resumable script + mirror fallback (overpass-api.de → kumi.systems → private.coffee) and fixed an OSM node field bug (lon, not lng).
+
+## Addendum v1.3b (2026-08-12) — Amritsar + alert engine v2
+
+- Amritsar curated (5 points: hospitals + Ram Bagh Police Station) → **63/65 cities, 327 points**.
+- **Alert engine v2**: fetchAlerts now fetches each recent item's linked CAP XML and parses authoritative `<cap:severity>` + `<cap:areaDesc>`; banners tag matches as "Your area" (district/city in areaDesc) vs "Your state" vs "Regional"; severity colors come from the CAP field (Extreme→extreme, Severe→high, Moderate→med, Minor→info) with keyword fallback. Verified: Bhubaneswar→Kerala-Odisha item (state tag), Jaipur→East Rajasthan item (state tag).
