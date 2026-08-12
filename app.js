@@ -173,23 +173,55 @@
       if (!res.ok) return;
       const xml = await res.text();
       const doc = new DOMParser().parseFromString(xml, "text/xml");
-      const items = [...doc.querySelectorAll("item")].map(it => ({
-        title: (it.querySelector("title") || {}).textContent || "",
-        desc: (it.querySelector("description") || {}).textContent || "",
-        cat: (it.querySelector("category") || {}).textContent || "",
-        date: (it.querySelector("pubDate") || {}).textContent || "",
-      }));
+      const now = Date.now();
+      const items = [];
+      for (const it of doc.querySelectorAll("item")) {
+        const item = {
+          title: (it.querySelector("title") || {}).textContent || "",
+          desc: (it.querySelector("description") || {}).textContent || "",
+          cat: (it.querySelector("category") || {}).textContent || "",
+          date: (it.querySelector("pubDate") || {}).textContent || "",
+          sev: null,
+          areas: null,
+          link: (it.querySelector("link") || {}).textContent || "",
+        };
+        const t = item.date ? new Date(item.date).getTime() : NaN;
+        if (!isNaN(t) && (now - t) > 72 * 3600000) continue; // skip stale before detail fetch
+        if (item.link && item.link.endsWith(".xml")) {
+          try {
+            const cap = await (await fetch(item.link)).text();
+            const sevM = cap.match(/<cap:severity>([^<]*)<\/cap:severity>/);
+            if (sevM) item.sev = sevM[1].trim();
+            item.areas = [...cap.matchAll(/<cap:areaDesc>([^<]*)<\/cap:areaDesc>/g)].map(m => m[1].trim());
+          } catch (e) { /* detail fetch optional — title/desc matching still works */ }
+        }
+        items.push(item);
+      }
       store.set("alerts", { t: Date.now(), list: items });
       alertsCache = items;
       renderAlerts();
     } catch (e) { /* offline or blocked — seasonal callout still covers context */ }
   }
   function alertSeverity(a) {
-    const s = norm(a.title + " " + a.desc);
+    const s = norm((a.sev || "") + " " + a.title + " " + a.desc);
+    if (a.sev) {
+      if (a.sev === "Extreme") return "extreme";
+      if (a.sev === "Severe") return "high";
+      if (a.sev === "Moderate") return "med";
+      if (a.sev === "Minor") return "info";
+    }
     if (s.includes("extremelyheavy") || s.includes("extreme") || s.includes("cyclone") || s.includes("stormsurge") || s.includes("torrential")) return "extreme";
     if (s.includes("veryheavy") || s.includes("heatwave") || s.includes("flashflood") || s.includes("landslide")) return "high";
     if (s.includes("heavy") || s.includes("thunderstorm") || s.includes("strongwind")) return "med";
     return "info";
+  }
+  function areaHits(a, stateTok, cityTok) {
+    if (!a.areas || !a.areas.length) return null;
+    const areaHay = norm(a.areas.join(" "));
+    const hitCity = cityTok && areaHay.includes(cityTok);
+    const hitState = stateTok && areaHay.includes(stateTok);
+    if (hitCity || hitState) return { area: a.areas.join(", "), level: hitCity ? "city" : "state" };
+    return null;
   }
   function alertBanner(c) {
     if (!alertsCache || !alertsCache.length) return "";
@@ -197,17 +229,22 @@
     const cityTok = norm(c.n);
     const now = Date.now();
     const seen = new Set();
-    const hits = alertsCache.filter(a => {
+    const hits = [];
+    for (const a of alertsCache) {
       const t = a.date ? new Date(a.date).getTime() : NaN;
-      if (!isNaN(t) && (now - t) > 72 * 3600000) return false; // only recent warnings
+      if (!isNaN(t) && (now - t) > 72 * 3600000) continue; // only recent warnings
+      const areaHit = areaHits(a, stateTok, cityTok);
       const hay = norm(a.title + " " + a.desc);
-      if (!((stateTok && hay.includes(stateTok)) || (cityTok && hay.includes(cityTok)))) return false;
-      if (seen.has(a.title)) return false; // dedupe identical titles
+      const textHit = (stateTok && hay.includes(stateTok)) || (cityTok && hay.includes(cityTok));
+      if (!areaHit && !textHit) continue;
+      if (seen.has(a.title)) continue; // dedupe identical titles
       seen.add(a.title);
-      return true;
-    }).slice(0, 2);
+      const tag = areaHit ? (areaHit.level === "city" ? "Your area" : "Your state") : "Regional";
+      hits.push({ a, tag });
+      if (hits.length >= 2) break;
+    }
     if (!hits.length) return "";
-    return hits.map(a => `<div class="alertbanner ${alertSeverity(a)}"><b>⚠️ IMD active warning: ${a.title}</b><span>${a.desc} · issued ${(a.date || "").slice(5, 16)}</span></div>`).join("");
+    return hits.map(({ a, tag }) => `<div class="alertbanner ${alertSeverity(a)}"><b>⚠️ IMD active warning · ${tag}: ${a.title}</b><span>${a.desc} · issued ${(a.date || "").slice(5, 16)}</span></div>`).join("");
   }
   function renderAlerts() {
     const slot = $("alertSlot");
