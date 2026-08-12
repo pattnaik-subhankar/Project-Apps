@@ -32,6 +32,8 @@ body {
 nav { display: flex; gap: 8px; flex-wrap: wrap; }
 
 /* buttons */
+.langsel { padding: 7px 10px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--card); color: var(--ink-soft); font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--sans); margin-right: 4px; }
+.lang-note { opacity: 0.75; font-size: 11.5px; margin-top: 4px; }
 .btn { border: 1px solid var(--line-strong); background: var(--card); color: var(--ink-soft); padding: 9px 15px; border-radius: 999px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--sans); transition: .15s; }
 .btn:hover { border-color: var(--terra); color: var(--terra); }
 .btn.primary { background: var(--terra); color: #fff; border-color: var(--terra); }

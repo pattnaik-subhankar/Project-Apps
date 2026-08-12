@@ -18,46 +18,51 @@
   <div class="inner">
     <div class="brand">
       <div class="brand-mark">🏠</div>
-      <div><div class="brand-name">ReadyHome India</div><div class="brand-sub">Disaster preparedness, personalised</div></div>
+      <div><div class="brand-name">ReadyHome India</div><div class="brand-sub" data-i18n="brand_sub">Disaster preparedness, personalised</div></div>
     </div>
     <nav>
-      <button id="printBtn" class="btn ghost">🖨 Print / PDF</button>
-      <button id="dlBtn" class="btn ghost">⬇ Plan (.md)</button>
-      <button id="copyBtn" class="btn ghost">🔗 Link</button>
-      <button id="waBtn" class="btn ghost">📲 Share</button>
-      <button id="resetBtn" class="btn ghost">↺ Reset</button>
+      <select id="langSel" class="langsel" title="Language / भाषा" aria-label="Language">
+        <option value="en">English</option>
+        <option value="hi">हिंदी</option>
+      </select>
+      <button id="printBtn" class="btn ghost" data-i18n="print">🖨 Print / PDF</button>
+      <button id="dlBtn" class="btn ghost" data-i18n="dl">⬇ Plan (.md)</button>
+      <button id="copyBtn" class="btn ghost" data-i18n="link">🔗 Link</button>
+      <button id="waBtn" class="btn ghost" data-i18n="share">📲 Share</button>
+      <button id="resetBtn" class="btn ghost" data-i18n="reset">↺ Reset</button>
     </nav>
   </div>
 </header>
 
 <section class="hero">
   <div class="inner">
-    <div class="eyebrow">Cyclones · Floods · Heatwaves · Earthquakes · Power outages</div>
-    <h1>Your city. Your risks. <br>A complete preparedness plan in seconds.</h1>
-    <p class="lede">Type any major Indian city — ReadyHome maps its real disaster profile (cyclone, flood, seismic zone, heatwave) and builds the full plan: what to stock, what to do in the first 72 hours, how to harden your home, and how to protect your family — including elderly parents.</p>
+    <div class="eyebrow" data-i18n="hero_eyebrow">Cyclones · Floods · Heatwaves · Earthquakes · Power outages</div>
+    <h1><span data-i18n="hero_h1a">Your city. Your risks.</span> <br><span data-i18n="hero_h1b">A complete preparedness plan in seconds.</span></h1>
+    <p class="lede" data-i18n="hero_lede">Type any major Indian city — ReadyHome maps its real disaster profile (cyclone, flood, seismic zone, heatwave) and builds the full plan: what to stock, what to do in the first 72 hours, how to harden your home, and how to protect your family — including elderly parents.</p>
 
     <div class="search-box">
-      <input id="locInput" type="text" placeholder="Type your city — e.g. Bhubaneswar, Chennai, Patna…" autocomplete="off">
-      <button id="goBtn" class="btn primary">Generate plan →</button>
-      <button id="geoBtn" class="btn ghost">📍 Use my location</button>
+      <input id="locInput" type="text" data-i18n-ph="loc_ph" placeholder="Type your city — e.g. Bhubaneswar, Chennai, Patna…" autocomplete="off">
+      <button id="goBtn" class="btn primary" data-i18n="generate">Generate plan →</button>
+      <button id="geoBtn" class="btn ghost" data-i18n="geo">📍 Use my location</button>
       <div id="suggestions" class="hidden"></div>
     </div>
-    <p class="note">45+ Indian cities covered · profiles from IMD / NDMA / BIS zone maps · for exact decisions, official government sources remain authoritative</p>
+    <p class="note" data-i18n="hero_note">45+ Indian cities covered · profiles from IMD / NDMA / BIS zone maps · for exact decisions, official government sources remain authoritative</p>
+    <p class="note lang-note" data-i18n="lang_note">हिंदी translation in progress — checklist content remains in English</p>
   </div>
 </section>
 
 <section class="howto">
   <div class="inner">
-    <div class="eyebrow">How it works</div>
-    <h2 class="howto-title">Your family prepared, in 7 steps</h2>
+    <div class="eyebrow" data-i18n="howto_eyebrow">How it works</div>
+    <h2 class="howto-title" data-i18n="howto_title">Your family prepared, in 7 steps</h2>
     <div class="guide-grid">
-      <div class="gcard"><span class="gnum">1</span><img src="assets/guide-step1.jpg" alt="Open ReadyHome"><b>Open ReadyHome</b><span class="glabel">Works on any phone or laptop, no sign-up</span></div>
-      <div class="gcard"><span class="gnum">2</span><img src="assets/guide-step2.jpg" alt="Type your city"><b>Type your city</b><span class="glabel">60+ cities & towns mapped — or use your location</span></div>
-      <div class="gcard"><span class="gnum">3</span><img src="assets/guide-step3.jpg" alt="Review your risk profile"><b>Review your risk profile</b><span class="glabel">Cyclone, flood, seismic zone, heatwave — your city’s real risks</span></div>
-      <div class="gcard"><span class="gnum">4</span><img src="assets/guide-step4.jpg" alt="Make the family plan"><b>Make the family plan</b><span class="glabel">Roles, meeting points, elderly care, out-of-city contact</span></div>
-      <div class="gcard"><span class="gnum">5</span><img src="assets/guide-step5.jpg" alt="Build your kit"><b>Build your kit</b><span class="glabel">Tiered shopping list with direct product links</span></div>
-      <div class="gcard"><span class="gnum">6</span><img src="assets/guide-step6.jpg" alt="Practice the skills"><b>Practice the skills</b><span class="glabel">DIY techniques: filter, knots, stove, CPR — with drawings</span></div>
-      <div class="gcard wide"><span class="gnum">7</span><img src="assets/guide-step7.jpg" alt="Refresh every month"><b>Refresh every month</b><span class="glabel">Go-bag check on the 1st, drills every quarter — checklists track your progress automatically</span></div>
+      <div class="gcard"><span class="gnum">1</span><img src="assets/guide-step1.jpg" alt="Open ReadyHome"><b data-i18n="guide_1_t">Open ReadyHome</b><span class="glabel" data-i18n="guide_1_l">Works on any phone or laptop, no sign-up</span></div>
+      <div class="gcard"><span class="gnum">2</span><img src="assets/guide-step2.jpg" alt="Type your city"><b data-i18n="guide_2_t">Type your city</b><span class="glabel" data-i18n="guide_2_l">60+ cities & towns mapped — or use your location</span></div>
+      <div class="gcard"><span class="gnum">3</span><img src="assets/guide-step3.jpg" alt="Review your risk profile"><b data-i18n="guide_3_t">Review your risk profile</b><span class="glabel" data-i18n="guide_3_l">Cyclone, flood, seismic zone, heatwave — your city’s real risks</span></div>
+      <div class="gcard"><span class="gnum">4</span><img src="assets/guide-step4.jpg" alt="Make the family plan"><b data-i18n="guide_4_t">Make the family plan</b><span class="glabel" data-i18n="guide_4_l">Roles, meeting points, elderly care, out-of-city contact</span></div>
+      <div class="gcard"><span class="gnum">5</span><img src="assets/guide-step5.jpg" alt="Build your kit"><b data-i18n="guide_5_t">Build your kit</b><span class="glabel" data-i18n="guide_5_l">Tiered shopping list with direct product links</span></div>
+      <div class="gcard"><span class="gnum">6</span><img src="assets/guide-step6.jpg" alt="Practice the skills"><b data-i18n="guide_6_t">Practice the skills</b><span class="glabel" data-i18n="guide_6_l">DIY techniques: filter, knots, stove, CPR — with drawings</span></div>
+      <div class="gcard wide"><span class="gnum">7</span><img src="assets/guide-step7.jpg" alt="Refresh every month"><b data-i18n="guide_7_t">Refresh every month</b><span class="glabel" data-i18n="guide_7_l">Go-bag check on the 1st, drills every quarter — checklists track your progress automatically</span></div>
     </div>
   </div>
 </section>
@@ -69,7 +74,7 @@
     <div class="alertslot" id="alertSlot"></div>
 
     <div class="progress">
-      <div class="prog-row"><span id="progTxt">Preparedness: 0%</span><span>checklists save automatically</span></div>
+      <div class="prog-row"><span id="progTxt">Preparedness: 0%</span><span data-i18n="prog_hint">checklists save automatically</span></div>
       <div class="prog-track"><div id="progBar"></div></div>
     </div>
 
@@ -85,8 +90,8 @@
 
 <footer>
   <div class="inner">
-    <b>ReadyHome India</b> · a venture under the project-agents repository · Built Aug 2026.
-    <br>Risk profiles are indicative (IMD/NDMA/BIS zone maps, state disaster records). Always follow official evacuation orders — <b>112</b> for any emergency, <b>1078</b> for disasters. Nothing here replaces government advisories.
+    <b data-i18n="footer_brand">ReadyHome India</b><span data-i18n="footer_vent"> · a venture under the project-agents repository · Built Aug 2026.</span>
+    <br><span data-i18n="footer_disclaimer">Risk profiles are indicative (IMD/NDMA/BIS zone maps, state disaster records). Always follow official evacuation orders — <b>112</b> for any emergency, <b>1078</b> for disasters. Nothing here replaces government advisories.</span>
   </div>
 </footer>
 
@@ -97,11 +102,11 @@
 
 <div id="drillModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Three minute evacuation drill">
   <div class="modal-card">
-    <div class="drill-head"><b>🏃 3-minute evacuation drill</b><button id="drillClose" class="x" aria-label="Close">✕</button></div>
+    <div class="drill-head"><b data-i18n="drill_head">🏃 3-minute evacuation drill</b><button id="drillClose" class="x" aria-label="Close">✕</button></div>
     <div id="drillTimer" class="drill-timer">3:00</div>
     <ul id="drillList" class="drill-list"></ul>
-    <div id="drillDone" class="drill-done hidden">✅ Done! Review what took longest, then fix it.</div>
-    <button id="drillStart" class="btn primary drill-start">▶ Start drill</button>
+    <div id="drillDone" class="drill-done hidden" data-i18n="drill_done">✅ Done! Review what took longest, then fix it.</div>
+    <button id="drillStart" class="btn primary drill-start" data-i18n="drill_start">▶ Start drill</button>
   </div>
 </div>
 </body>

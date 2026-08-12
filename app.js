@@ -11,6 +11,92 @@
   let current = null; // resolved city
   let plan = null;
 
+  /* ---------- i18n (en/hi shipped; od/ta slot in as data) ---------- */
+  let lang = store.get("lang") || "en";
+  let noScroll = false;
+  const L = {
+    en: {
+      brand_sub: "Disaster preparedness, personalised",
+      print: "🖨 Print / PDF", dl: "⬇ Plan (.md)", link: "🔗 Link", share: "📲 Share", reset: "↺ Reset",
+      hero_eyebrow: "Cyclones · Floods · Heatwaves · Earthquakes · Power outages",
+      hero_h1a: "Your city. Your risks.", hero_h1b: "A complete preparedness plan in seconds.",
+      hero_lede: "Type any major Indian city — ReadyHome maps its real disaster profile (cyclone, flood, seismic zone, heatwave) and builds the full plan: what to stock, what to do in the first 72 hours, how to harden your home, and how to protect your family — including elderly parents.",
+      loc_ph: "Type your city — e.g. Bhubaneswar, Chennai, Patna…",
+      generate: "Generate plan →", geo: "📍 Use my location", geo_locating: "Locating…",
+      hero_note: "45+ Indian cities covered · profiles from IMD / NDMA / BIS zone maps · for exact decisions, official government sources remain authoritative",
+      howto_eyebrow: "How it works", howto_title: "Your family prepared, in 7 steps",
+      guide_1_t: "Open ReadyHome", guide_1_l: "Works on any phone or laptop, no sign-up",
+      guide_2_t: "Type your city", guide_2_l: "60+ cities & towns mapped — or use your location",
+      guide_3_t: "Review your risk profile", guide_3_l: "Cyclone, flood, seismic zone, heatwave — your city’s real risks",
+      guide_4_t: "Make the family plan", guide_4_l: "Roles, meeting points, elderly care, out-of-city contact",
+      guide_5_t: "Build your kit", guide_5_l: "Tiered shopping list with direct product links",
+      guide_6_t: "Practice the skills", guide_6_l: "DIY techniques: filter, knots, stove, CPR — with drawings",
+      guide_7_t: "Refresh every month", guide_7_l: "Go-bag check on the 1st, drills every quarter — checklists track your progress automatically",
+      prog: "Preparedness: {p}%", prog_hint: "checklists save automatically",
+      risk_cyc: "Cyclone", risk_flood: "Flood / waterlogging", risk_quake: "Earthquake (zone {z})", risk_heat: "Heatwave", risk_tsu: "Tsunami / surge",
+      lvl_high: "HIGH", lvl_mod: "MODERATE", lvl_low: "LOW",
+      sec_overview: "Your risk profile", sec_numbers: "Emergency numbers", sec_family: "Family plan", sec_h72: "First 72 hours", sec_sustain: "Two-week sustain", sec_water: "Water", sec_food: "Food", sec_cooking: "Cooking without power", sec_power: "Power & light", sec_firstaid: "First aid", sec_health: "Health & elderly", sec_tools: "Tools & gear", sec_gobags: "Go-bags", sec_kit: "Kit & expiry tracker", sec_harden: "Home hardening", sec_quake: "Earthquake drill", sec_heat: "Heatwave", sec_flood: "Flood", sec_docs: "Documents & money", sec_diy: "DIY survival tactics", sec_shop: "Shopping list", sec_calendar: "30-day build",
+      chip_cyclone: "cyclone", chip_flood: "flood", chip_heat: "heat", chip_eq: "EQ zone {z}", chip_none: "low hazard",
+      alert_warn: "⚠️ IMD active warning", alert_area: "Your area", alert_state: "Your state", alert_reg: "Regional",
+      season_cyc: "🌪️ Cyclone season is on", season_flood: "🌧️ Monsoon: flood readiness", season_heat: "☀️ Heatwave season", season_winter: "🧥 Winter check", season_month: "📋 Month-end readiness",
+      generated: "Preparedness plan generated", notfound: "Location not found", notfound_sub: "Try a nearby major city, or use \"Use my location\" (nearest covered city is matched).",
+      drill_head: "🏃 3-minute evacuation drill", drill_start: "▶ Start drill", drill_run: "Drill running…", drill_again: "▶ Run again", drill_done: "✅ Done! Review what took longest, then fix it.", last_drill: "Last drill: {d}", no_drill: "No drill yet — try one today",
+      kit_ph: "Item — e.g. Aquatabs 30pk, Dal 5kg, Batteries", kit_cat_water: "Water", kit_cat_food: "Food", kit_cat_power: "Power", kit_cat_first: "First aid", kit_cat_tools: "Tools", kit_cat_other: "Other", kit_add: "+ Add", kit_empty: "Nothing tracked yet — add your first kit item above (food, water tanks, batteries, medicines).", kit_no_date: "no date", kit_expired: "expired {d}d ago", kit_dleft: "{d}d left", kit_ok: "ok · {d}d", kit_note: "Rotate: eat the oldest stock first. Expired ≠ useless — check quality, but dispose expired medicines safely. Your tracker lives only in this browser.",
+      geo_not_covered: "Location not covered — try a nearby city", geo_denied: "Location access denied. Type your city instead.", reset_confirm: "Reset all checklist progress?", copied: "✅ Copied",
+      lang_note: "हिंदी translation in progress — checklist content remains in English",
+      footer_brand: "ReadyHome India", footer_vent: " · a venture under the project-agents repository · Built Aug 2026.", footer_disclaimer: "Risk profiles are indicative (IMD/NDMA/BIS zone maps, state disaster records). Always follow official evacuation orders — 112 for any emergency, 1078 for disasters. Nothing here replaces government advisories.",
+    },
+    hi: {
+      brand_sub: "आपदा तैयारी, आपके लिए",
+      print: "🖨 प्रिंट / PDF", dl: "⬇ प्लान (.md)", link: "🔗 लिंक", share: "📲 शेयर", reset: "↺ रीसेट",
+      hero_eyebrow: "चक्रवात · बाढ़ · लू · भूकंप · बिजली गुल",
+      hero_h1a: "आपका शहर। आपके जोखिम।", hero_h1b: "सेकंडों में पूरी तैयारी की योजना।",
+      hero_lede: "कोई भी बड़ा भारतीय शहर लिखें — ReadyHome उसकी असली आपदा प्रोफ़ाइल (चक्रवात, बाढ़, भूकंप क्षेत्र, लू) पहचानता है और पूरी योजना बनाता है: क्या रखें, पहले 72 घंटों में क्या करें, घर को कैसे मज़बूत करें, और परिवार — बुज़ुर्ग माता-पिता सहित — की सुरक्षा कैसे करें।",
+      loc_ph: "अपना शहर लिखें — जैसे भुवनेश्वर, चेन्नई, पटना…",
+      generate: "प्लान बनाएं →", geo: "📍 मेरी लोकेशन", geo_locating: "लोकेशन मिल रही है…",
+      hero_note: "45+ भारतीय शहर कवर · प्रोफ़ाइल IMD / NDMA / BIS ज़ोन मानचित्र से · सटीक फ़ैसलों के लिए सरकारी स्रोत ही मान्य हैं",
+      howto_eyebrow: "कैसे काम करता है", howto_title: "आपका परिवार तैयार, 7 चरणों में",
+      guide_1_t: "ReadyHome खोलें", guide_1_l: "किसी भी फ़ोन या लैपटॉप पर चलता है, साइन-अप नहीं",
+      guide_2_t: "अपना शहर लिखें", guide_2_l: "60+ शहर मैप किए गए — या अपनी लोकेशन इस्तेमाल करें",
+      guide_3_t: "अपनी जोखिम प्रोफ़ाइल देखें", guide_3_l: "चक्रवात, बाढ़, भूकंप क्षेत्र, लू — आपके शहर के असली जोखिम",
+      guide_4_t: "परिवार की योजना बनाएं", guide_4_l: "भूमिकाएँ, मिलने की जगह, बुज़ुर्गों की देखभाल, शहर से बाहर संपर्क",
+      guide_5_t: "अपना किट बनाएं", guide_5_l: "सीधे प्रोडक्ट लिंक के साथ चरणबद्ध खरीदारी सूची",
+      guide_6_t: "हुनर का अभ्यास करें", guide_6_l: "DIY तकनीकें: फ़िल्टर, गाँठ, चूल्हा, CPR — चित्रों के साथ",
+      guide_7_t: "हर महीने ताज़ा करें", guide_7_l: "1 तारीख को गो-बैग जाँच, हर तिमाही अभ्यास — चेकलिस्ट अपने-आप प्रगति ट्रैक करती है",
+      prog: "तैयारी: {p}%", prog_hint: "चेकलिस्ट अपने-आप सेव होती है",
+      risk_cyc: "चक्रवात", risk_flood: "बाढ़ / जलभराव", risk_quake: "भूकंप (ज़ोन {z})", risk_heat: "लू (हीटवेव)", risk_tsu: "सुनामी / लहर",
+      lvl_high: "उच्च", lvl_mod: "मध्यम", lvl_low: "कम",
+      sec_overview: "आपकी जोखिम प्रोफ़ाइल", sec_numbers: "आपातकालीन नंबर", sec_family: "परिवार योजना", sec_h72: "पहले 72 घंटे", sec_sustain: "दो सप्ताह की तैयारी", sec_water: "पानी", sec_food: "खाना", sec_cooking: "बिना बिजली खाना पकाना", sec_power: "बिजली और रोशनी", sec_firstaid: "प्राथमिक चिकित्सा", sec_health: "स्वास्थ्य और बुज़ुर्ग", sec_tools: "औज़ार और सामान", sec_gobags: "गो-बैग", sec_kit: "किट और एक्सपायरी ट्रैकर", sec_harden: "घर मज़बूत करना", sec_quake: "भूकंप अभ्यास", sec_heat: "लू (हीटवेव)", sec_flood: "बाढ़", sec_docs: "दस्तावेज़ और पैसे", sec_diy: "DIY उत्तरजीविता तकनीक", sec_shop: "खरीदारी सूची", sec_calendar: "30-दिन की योजना",
+      chip_cyclone: "चक्रवात", chip_flood: "बाढ़", chip_heat: "लू", chip_eq: "भूकंप ज़ोन {z}", chip_none: "कम जोखिम",
+      alert_warn: "⚠️ IMD सक्रिय चेतावनी", alert_area: "आपका क्षेत्र", alert_state: "आपका राज्य", alert_reg: "क्षेत्रीय",
+      season_cyc: "🌪️ चक्रवात का मौसम चल रहा है", season_flood: "🌧️ मानसून: बाढ़ की तैयारी", season_heat: "☀️ लू का मौसम", season_winter: "🧥 सर्दी की जाँच", season_month: "📋 महीने के अंत की तैयारी",
+      generated: "तैयारी की योजना बन गई", notfound: "शहर नहीं मिला", notfound_sub: "पास का कोई बड़ा शहर आज़माएं, या \"मेरी लोकेशन\" इस्तेमाल करें (सबसे नज़दीकी कवर शहर मिलेगा)।",
+      drill_head: "🏃 3 मिनट का निकासी अभ्यास", drill_start: "▶ अभ्यास शुरू करें", drill_run: "अभ्यास चल रहा है…", drill_again: "▶ फिर चलाएं", drill_done: "✅ हो गया! सबसे ज़्यादा समय लेने वाली चीज़ देखें, फिर सुधारें।", last_drill: "आख़िरी अभ्यास: {d}", no_drill: "अभी तक कोई अभ्यास नहीं — आज एक करें",
+      kit_ph: "सामान — जैसे Aquatabs 30pk, दाल 5kg, बैटरी", kit_cat_water: "पानी", kit_cat_food: "खाना", kit_cat_power: "बिजली", kit_cat_first: "प्राथमिक चिकित्सा", kit_cat_tools: "औज़ार", kit_cat_other: "अन्य", kit_add: "+ जोड़ें", kit_empty: "अभी कुछ नहीं जोड़ा गया — ऊपर अपना पहला किट सामान जोड़ें (खाना, पानी टैंक, बैटरी, दवाइयाँ)।", kit_no_date: "कोई तारीख नहीं", kit_expired: "{d} दिन पहले एक्सपायर", kit_dleft: "{d} दिन बाकी", kit_ok: "ठीक · {d} दिन", kit_note: "घुमाएँ: पहले सबसे पुराना स्टॉक खाएँ। एक्सपायर का मतलब बेकार नहीं — गुणवत्ता जाँचें, पर एक्सपायर दवाइयाँ सुरक्षित तरीके से नष्ट करें। आपका ट्रैकर केवल इसी ब्राउज़र में रहता है।",
+      geo_not_covered: "लोकेशन कवर नहीं है — पास का शहर आज़माएं", geo_denied: "लोकेशन की अनुमति नहीं मिली। अपना शहर लिखें।", reset_confirm: "सारी चेकलिस्ट प्रगति रीसेट करें?", copied: "✅ कॉपी हुआ",
+      lang_note: "हिंदी अनुवाद जारी है — चेकलिस्ट की सामग्री अभी अंग्रेज़ी में है",
+      footer_brand: "ReadyHome India", footer_vent: " · project-agents रिपॉज़िटरी का एक वेंचर · अगस्त 2026 में बना", footer_disclaimer: "जोखिम प्रोफ़ाइल संकेतात्मक हैं (IMD/NDMA/BIS ज़ोन मानचित्र, राज्य आपदा रिकॉर्ड)। हमेशा आधिकारिक निकासी आदेशों का पालन करें — किसी भी आपात स्थिति के लिए 112, आपदाओं के लिए 1078। यहाँ कुछ भी सरकारी सलाह की जगह नहीं लेता।",
+    },
+  };
+  function t(k, v) {
+    let s = (L[lang] && L[lang][k]) || L.en[k] || k;
+    if (v) Object.keys(v).forEach(x => { s = s.split("{" + x + "}").join(v[x]); });
+    return s;
+  }
+  function applyLang() {
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+    const active = plan ? ((document.querySelector("#tabs .tab.active") || {}).dataset || {}).sec : null;
+    if (plan) {
+      noScroll = true;
+      plan = buildPlan(plan.city);
+      renderPlan();
+      if (active && plan.sections.some(s => s.id === active)) showSection(active);
+      noScroll = false;
+    }
+  }
+
   /* ---------- curated video guides (YouTube, verified 2026-08) ---------- */
   const VIDEOS = {
     firstaid: { id: "BQNNOh8c8ks", t: "How to do CPR on an Adult", b: "St John Ambulance" },
@@ -118,21 +204,21 @@
   }
   function riskChips(c) {
     const parts = [];
-    if (c.cyc >= 3) parts.push("cyclone");
-    if (c.flood >= 3) parts.push("flood");
-    if (c.quake >= 4) parts.push("EQ zone " + c.quake);
-    if (c.heat >= 3) parts.push("heat");
-    return parts.join(" · ") || "low hazard";
+    if (c.cyc >= 3) parts.push(t("chip_cyclone"));
+    if (c.flood >= 3) parts.push(t("chip_flood"));
+    if (c.quake >= 4) parts.push(t("chip_eq", { z: c.quake }));
+    if (c.heat >= 3) parts.push(t("chip_heat"));
+    return parts.join(" · ") || t("chip_none");
   }
 
   /* ---------- plan generation ---------- */
   function genRisk(c) {
     return {
-      cyc: { label: "Cyclone", lvl: c.cyc, cls: riskCls(c.cyc) },
-      flood: { label: "Flood / waterlogging", lvl: c.flood, cls: riskCls(c.flood) },
-      quake: { label: "Earthquake (zone " + c.quake + ")", lvl: c.quake >= 4 ? 3 : c.quake >= 3 ? 2 : 1, cls: c.quake >= 4 ? "high" : c.quake >= 3 ? "med" : "low" },
-      heat: { label: "Heatwave", lvl: c.heat, cls: riskCls(c.heat) },
-      tsu: { label: "Tsunami / surge", lvl: c.tsu, cls: riskCls(c.tsu) },
+      cyc: { label: t("risk_cyc"), lvl: c.cyc, cls: riskCls(c.cyc) },
+      flood: { label: t("risk_flood"), lvl: c.flood, cls: riskCls(c.flood) },
+      quake: { label: t("risk_quake", { z: c.quake }), lvl: c.quake >= 4 ? 3 : c.quake >= 3 ? 2 : 1, cls: c.quake >= 4 ? "high" : c.quake >= 3 ? "med" : "low" },
+      heat: { label: t("risk_heat"), lvl: c.heat, cls: riskCls(c.heat) },
+      tsu: { label: t("risk_tsu"), lvl: c.tsu, cls: riskCls(c.tsu) },
     };
   }
   function riskCls(l) { return l >= 3 ? "high" : l === 2 ? "med" : "low"; }
@@ -142,24 +228,24 @@
   /* ---------- seasonal awareness (calendar-based, works offline) ---------- */
   function seasonCallout(c) {
     const m = new Date().getMonth() + 1; // 1..12
-    let t = "", pts = [];
+    let title = "", pts = [];
     if (c.cyc >= 2 && ((m >= 4 && m <= 6) || (m >= 10 && m <= 12))) {
-      t = "🌪️ Cyclone season is on";
+      title = t("season_cyc");
       pts = ["Board/tape windows this week if not done", "Test the crank radio + charge power banks", "Confirm go-bags and the safe inner room", "Keep cash + documents pouch within reach"];
     } else if (c.flood >= 2 && m >= 6 && m <= 9) {
-      t = "🌧️ Monsoon: flood readiness";
+      title = t("season_flood");
       pts = ["Clear roof drains & gutters now", "Sandbags at doors; valuables raised", "Keep the car above half fuel", "Know two exits from your area"];
     } else if (c.heat >= 2 && m >= 3 && m <= 6) {
-      t = "☀️ Heatwave season";
+      title = t("season_heat");
       pts = ["Check parents twice daily 11 AM–4 PM", "ORS + battery fans + ice packs ready", "Shade cloth on west windows", "No outdoor walks for 60+ in peak heat"];
     } else if (m >= 11 || m <= 2) {
-      t = "🧥 Winter check";
+      title = t("season_winter");
       pts = ["Warm blankets + clothes in go-bags", "Test fire extinguisher + smoke alarm", "Review pantry rotation"];
     } else {
-      t = "📋 Month-end readiness";
+      title = t("season_month");
       pts = ["Go-bag check on the 1st", "Rotate 6-month-old pantry stock", "Review your family drill"];
     }
-    return `<div class="seasonal"><b>${t}</b>${ul(pts)}</div>`;
+    return `<div class="seasonal"><b>${title}</b>${ul(pts)}</div>`;
   }
 
   /* ---------- live IMD alerts (official CAP feed, CORS-open) ---------- */
@@ -239,12 +325,12 @@
       if (!areaHit && !textHit) continue;
       if (seen.has(a.title)) continue; // dedupe identical titles
       seen.add(a.title);
-      const tag = areaHit ? (areaHit.level === "city" ? "Your area" : "Your state") : "Regional";
+      const tag = areaHit ? (areaHit.level === "city" ? t("alert_area") : t("alert_state")) : t("alert_reg");
       hits.push({ a, tag });
       if (hits.length >= 2) break;
     }
     if (!hits.length) return "";
-    return hits.map(({ a, tag }) => `<div class="alertbanner ${alertSeverity(a)}"><b>⚠️ IMD active warning · ${tag}: ${a.title}</b><span>${a.desc} · issued ${(a.date || "").slice(5, 16)}</span></div>`).join("");
+    return hits.map(({ a, tag }) => `<div class="alertbanner ${alertSeverity(a)}"><b>${t("alert_warn")} · ${tag}: ${a.title}</b><span>${a.desc} · issued ${(a.date || "").slice(5, 16)}</span></div>`).join("");
   }
   function renderAlerts() {
     const slot = $("alertSlot");
@@ -296,15 +382,15 @@
     return `
       <div class="kitbox">
         <form id="kitForm" class="kit-form" autocomplete="off">
-          <input id="kitName" placeholder="Item — e.g. Aquatabs 30pk, Dal 5kg, Batteries" required maxlength="60">
+          <input id="kitName" placeholder="${t("kit_ph")}" required maxlength="60">
           <select id="kitCat">
-            <option>Water</option><option>Food</option><option>Power</option><option>First aid</option><option>Tools</option><option>Other</option>
+            <option>${t("kit_cat_water")}</option><option>${t("kit_cat_food")}</option><option>${t("kit_cat_power")}</option><option>${t("kit_cat_first")}</option><option>${t("kit_cat_tools")}</option><option>${t("kit_cat_other")}</option>
           </select>
           <input id="kitExp" type="date" required>
-          <button class="btn primary" type="submit">+ Add</button>
+          <button class="btn primary" type="submit">${t("kit_add")}</button>
         </form>
         <div id="kitList"></div>
-        <p class="note">Rotate: eat the oldest stock first. Expired ≠ useless — check quality, but dispose expired medicines safely. Your tracker lives only in this browser.</p>
+        <p class="note">${t("kit_note")}</p>
       </div>`;
   }
   function daysLeft(iso) {
@@ -316,15 +402,15 @@
     const box = $("kitList");
     if (!box) return;
     const items = store.get("kit", []);
-    if (!items.length) { box.innerHTML = `<p class="kit-empty">Nothing tracked yet — add your first kit item above (food, water tablets, batteries, medicines…).</p>`; return; }
+    if (!items.length) { box.innerHTML = `<p class="kit-empty">${t("kit_empty")}</p>`; return; }
     const sorted = items.slice().sort((a, b) => (a.e || "9999").localeCompare(b.e || "9999"));
     box.innerHTML = sorted.map((it, i) => {
       const d = daysLeft(it.e);
       let badge = "";
-      if (d === null) badge = `<span class="kit-badge ok">no date</span>`;
-      else if (d < 0) badge = `<span class="kit-badge exp">expired ${-d}d ago</span>`;
-      else if (d <= 30) badge = `<span class="kit-badge soon">${d}d left</span>`;
-      else badge = `<span class="kit-badge ok">ok · ${d}d</span>`;
+      if (d === null) badge = `<span class="kit-badge ok">${t("kit_no_date")}</span>`;
+      else if (d < 0) badge = `<span class="kit-badge exp">${t("kit_expired", { d: -d })}</span>`;
+      else if (d <= 30) badge = `<span class="kit-badge soon">${t("kit_dleft", { d })}</span>`;
+      else badge = `<span class="kit-badge ok">${t("kit_ok", { d })}</span>`;
       const cat = it.c || "Other";
       return `<div class="kit-item ${d !== null && d < 0 ? "is-exp" : d !== null && d <= 30 ? "is-soon" : ""}">
         <span class="kit-cat">${cat}</span>
@@ -354,7 +440,7 @@
   function lastDrillText() {
     try {
       const d = localStorage.getItem("readyhome_last_drill");
-      return d ? "Last drill: " + new Date(d).toLocaleDateString("en-IN") : "No drill yet — try one today";
+      return d ? t("last_drill", { d: new Date(d).toLocaleDateString("en-IN") }) : t("no_drill");
     } catch (e) { return ""; }
   }
   function openDrill() {
@@ -363,7 +449,7 @@
     $("drillTimer").textContent = "3:00";
     $("drillList").innerHTML = DRILL_ITEMS.map((it, i) => `<li><label><input type="checkbox" data-i="${i}"> ${it}</label></li>`).join("");
     $("drillDone").classList.add("hidden");
-    $("drillStart").textContent = "▶ Start drill";
+    $("drillStart").textContent = t("drill_start");
     $("drillStart").disabled = false;
   }
   function closeDrill() {
@@ -372,7 +458,7 @@
   }
   function startDrill() {
     const btn = $("drillStart"); if (!btn) return;
-    btn.disabled = true; btn.textContent = "Drill running…";
+    btn.disabled = true; btn.textContent = t("drill_run");
     drillEnd = Date.now() + 180000;
     drillTimer = setInterval(function () {
       const left = Math.max(0, drillEnd - Date.now());
@@ -382,8 +468,8 @@
         clearInterval(drillTimer); drillTimer = null;
         $("drillDone").classList.remove("hidden");
         try { localStorage.setItem("readyhome_last_drill", new Date().toISOString()); } catch (e) {}
-        const ld = $("lastDrill"); if (ld) ld.textContent = "Last drill: " + new Date().toLocaleDateString("en-IN");
-        btn.textContent = "▶ Run again"; btn.disabled = false;
+        const ld = $("lastDrill"); if (ld) ld.textContent = t("last_drill", { d: new Date().toLocaleDateString("en-IN") });
+        btn.textContent = t("drill_again"); btn.disabled = false;
       }
     }, 250);
   }
@@ -396,28 +482,28 @@
     const risk = genRisk(c);
     const wL = waterLitres(c);
     const sections = [
-      { id: "overview", icon: "📋", title: "Your risk profile", tag: "start" },
-      { id: "numbers", icon: "📞", title: "Emergency numbers", tag: "start" },
-      { id: "family", icon: "👨‍👩‍👦", title: "Family plan", tag: "start" },
-      { id: "h72", icon: "⏱️", title: "First 72 hours", tag: "start" },
-      { id: "sustain", icon: "🗓️", title: "Two-week sustain", tag: "start" },
-      { id: "water", icon: "💧", title: "Water", tag: "core" },
-      { id: "food", icon: "🍚", title: "Food", tag: "core" },
-      { id: "cooking", icon: "🍳", title: "Cooking without power", tag: "core" },
-      { id: "power", icon: "🔋", title: "Power & light", tag: "core" },
-      { id: "firstaid", icon: "🩹", title: "First aid", tag: "core" },
-      { id: "health", icon: "💊", title: "Health & elderly", tag: "core" },
-      { id: "tools", icon: "🛠️", title: "Tools & gear", tag: "core" },
-      { id: "gobags", icon: "🎒", title: "Go-bags", tag: "core" },
-      { id: "kit", icon: "🧰", title: "Kit & expiry tracker", tag: "core" },
-      { id: "harden", icon: "🏠", title: "Home hardening", tag: "hazard", show: cycloneEmphasis(c) || floodEmphasis(c) },
-      { id: "quake", icon: "🪨", title: "Earthquake drill", tag: "hazard", show: c.quake >= 3 },
-      { id: "heat", icon: "🌡️", title: "Heatwave", tag: "hazard", show: heatEmphasis(c) },
-      { id: "flood", icon: "🌊", title: "Flood", tag: "hazard", show: floodEmphasis(c) },
-      { id: "docs", icon: "📄", title: "Documents & money", tag: "core" },
-      { id: "diy", icon: "🛠️", title: "DIY survival tactics", tag: "core" },
-      { id: "shop", icon: "🛒", title: "Shopping list", tag: "core" },
-      { id: "calendar", icon: "📅", title: "30-day build", tag: "core" },
+      { id: "overview", icon: "📋", title: t("sec_overview"), tag: "start" },
+      { id: "numbers", icon: "📞", title: t("sec_numbers"), tag: "start" },
+      { id: "family", icon: "👨‍👩‍👦", title: t("sec_family"), tag: "start" },
+      { id: "h72", icon: "⏱️", title: t("sec_h72"), tag: "start" },
+      { id: "sustain", icon: "🗓️", title: t("sec_sustain"), tag: "start" },
+      { id: "water", icon: "💧", title: t("sec_water"), tag: "core" },
+      { id: "food", icon: "🍚", title: t("sec_food"), tag: "core" },
+      { id: "cooking", icon: "🍳", title: t("sec_cooking"), tag: "core" },
+      { id: "power", icon: "🔋", title: t("sec_power"), tag: "core" },
+      { id: "firstaid", icon: "🩹", title: t("sec_firstaid"), tag: "core" },
+      { id: "health", icon: "💊", title: t("sec_health"), tag: "core" },
+      { id: "tools", icon: "🛠️", title: t("sec_tools"), tag: "core" },
+      { id: "gobags", icon: "🎒", title: t("sec_gobags"), tag: "core" },
+      { id: "kit", icon: "🧰", title: t("sec_kit"), tag: "core" },
+      { id: "harden", icon: "🏠", title: t("sec_harden"), tag: "hazard", show: cycloneEmphasis(c) || floodEmphasis(c) },
+      { id: "quake", icon: "🪨", title: t("sec_quake"), tag: "hazard", show: c.quake >= 3 },
+      { id: "heat", icon: "🌡️", title: t("sec_heat"), tag: "hazard", show: heatEmphasis(c) },
+      { id: "flood", icon: "🌊", title: t("sec_flood"), tag: "hazard", show: floodEmphasis(c) },
+      { id: "docs", icon: "📄", title: t("sec_docs"), tag: "core" },
+      { id: "diy", icon: "🛠️", title: t("sec_diy"), tag: "core" },
+      { id: "shop", icon: "🛒", title: t("sec_shop"), tag: "core" },
+      { id: "calendar", icon: "📅", title: t("sec_calendar"), tag: "core" },
     ].filter(s => s.show !== false);
 
     const content = {
@@ -673,7 +759,7 @@
     const c = plan.city;
     document.title = "ReadyHome — " + c.n + ", " + c.s;
     $("resultHead").innerHTML = `
-      <div class="eyebrow">Preparedness plan generated</div>
+      <div class="eyebrow">${t("generated")}</div>
       <h2>${c.n}, ${c.s}</h2>
       <p class="sub">${riskChips(c)} · generated ${new Date().toLocaleDateString("en-IN")}</p>`;
     $("tabs").innerHTML = plan.sections.map(s =>
@@ -699,7 +785,7 @@
       cb.parentElement.classList.toggle("checked", cb.checked);
       renderProgress();
     });
-    $("planView").scrollIntoView({ behavior: "smooth", block: "start" });
+    if (!noScroll) $("planView").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function sectionTotals() {
@@ -726,7 +812,7 @@
     });
     const pct = total ? Math.round(100 * done / total) : 0;
     $("progBar").style.width = pct + "%";
-    $("progTxt").textContent = "Preparedness: " + pct + "%";
+    $("progTxt").textContent = t("prog", { p: pct });
   }
 
   function downloadPlan() {
@@ -761,7 +847,7 @@
   function generate(q) {
     const c = resolveCity(q || $("locInput").value.trim());
     if (!c) {
-      $("resultHead").innerHTML = `<h2>Location not found</h2><p class="sub">Try a nearby major city, or use "Use my location" (nearest covered city is matched).</p>`;
+      $("resultHead").innerHTML = `<h2>${t("notfound")}</h2><p class="sub">${t("notfound_sub")}</p>`;
       $("tabs").innerHTML = ""; $("secBody").innerHTML = ""; $("planView").classList.add("hidden");
       return;
     }
@@ -786,26 +872,32 @@
   }
 
   function init() {
+    applyLang();
+    const langSel = $("langSel");
+    if (langSel) {
+      langSel.value = lang;
+      langSel.onchange = () => { lang = langSel.value; store.set("lang", lang); applyLang(); };
+    }
     $("locInput").addEventListener("input", e => renderSuggestions(e.target.value.trim()));
     $("locInput").addEventListener("focus", function () { this.select(); });
     $("locInput").addEventListener("keydown", e => { if (e.key === "Enter") { $("suggestions").classList.add("hidden"); generate(); } });
     $("goBtn").onclick = () => { $("suggestions").classList.add("hidden"); generate(); };
     $("geoBtn").onclick = () => {
-      $("geoBtn").textContent = "Locating…";
+      $("geoBtn").textContent = t("geo_locating");
       navigator.geolocation.getCurrentPosition(pos => {
         const c = nearestCity(pos.coords.latitude, pos.coords.longitude);
-        $("geoBtn").textContent = "📍 Use my location";
+        $("geoBtn").textContent = t("geo");
         if (c) generate(c.n);
-        else { $("locInput").value = "Location not covered — try a nearby city"; }
+        else { $("locInput").value = t("geo_not_covered"); }
       }, () => {
-        $("geoBtn").textContent = "📍 Use my location";
-        alert("Location access denied. Type your city instead.");
+        $("geoBtn").textContent = t("geo");
+        alert(t("geo_denied"));
       }, { timeout: 8000 });
     };
     $("printBtn").onclick = () => window.print();
     $("dlBtn").onclick = downloadPlan;
     $("resetBtn").onclick = () => {
-      if (confirm("Reset all checklist progress?")) {
+      if (confirm(t("reset_confirm"))) {
         Object.keys(localStorage).filter(k => k.startsWith("readyhome_chk_")).forEach(k => localStorage.removeItem(k));
         if (plan) renderPlan();
       }
@@ -824,8 +916,8 @@
     });
     $("copyBtn").onclick = function () {
       copyText(planUrl()).then(function () {
-        $("copyBtn").textContent = "✅ Copied";
-        setTimeout(function () { $("copyBtn").textContent = "🔗 Link"; }, 1600);
+        $("copyBtn").textContent = t("copied");
+        setTimeout(function () { $("copyBtn").textContent = t("link"); }, 1600);
       }).catch(function () {});
     };
     $("waBtn").onclick = function () {
