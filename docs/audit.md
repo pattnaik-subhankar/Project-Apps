@@ -50,3 +50,15 @@
 
 ## Verdict
 **Ship-ready.** All high-severity issues resolved; two real bugs (progress math, .md export) were caught by this audit and are now fixed. Remaining items are roadmap (Leh, IMD live alerts) or deliberate design trade-offs (chip size).
+
+## Addendum v1.1 (2026-08-12, post-audit features)
+
+Shipped after the audit (commits de4d85a, 93045d2) — no regressions observed; live-verified:
+
+- **Live IMD warnings (T-RH-201 ✅)** — official CAP feed (cap-sources.s3.amazonaws.com/in-imd-en/rss.xml, CORS *), fetched client-side, matched to plan state/city, 72 h freshness filter, 15-min cache, silent offline fallback. Verified: Jaipur shows active rainfall warning; stale (>72 h) warnings correctly suppressed.
+- **Kit & expiry tracker (T-RH-204 ✅)** — new 22nd section; add items (name/category/expiry), sorted list with expired / ≤30 d / ok badges, rotate (remove), localStorage 
+eadyhome_kit, 100-item cap. Verified: add → reload → persists.
+- Section counts changed: Bhubaneswar 20→21, Patna 21→22, Bhadrak 20→21.
+- Docs updated: PRD F-table (F13/F14), tickets T-RH-201/204 moved to shipped, system design storage + CAP feed, frontend spec components.
+
+New known limitation: CAP feed warnings are state-level text matches; district-level granularity + severity colours = next step.
