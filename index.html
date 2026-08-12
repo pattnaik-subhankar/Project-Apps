@@ -49,7 +49,7 @@
     <h2 class="howto-title">Your family prepared, in 7 steps</h2>
     <div class="guide-grid">
       <div class="gcard"><span class="gnum">1</span><img src="assets/guide-step1.jpg" alt="Open ReadyHome"><b>Open ReadyHome</b><span class="glabel">Works on any phone or laptop, no sign-up</span></div>
-      <div class="gcard"><span class="gnum">2</span><img src="assets/guide-step2.jpg" alt="Type your city"><b>Type your city</b><span class="glabel">46 cities mapped — or use your location</span></div>
+      <div class="gcard"><span class="gnum">2</span><img src="assets/guide-step2.jpg" alt="Type your city"><b>Type your city</b><span class="glabel">60+ cities & towns mapped — or use your location</span></div>
       <div class="gcard"><span class="gnum">3</span><img src="assets/guide-step3.jpg" alt="Review your risk profile"><b>Review your risk profile</b><span class="glabel">Cyclone, flood, seismic zone, heatwave — your city’s real risks</span></div>
       <div class="gcard"><span class="gnum">4</span><img src="assets/guide-step4.jpg" alt="Make the family plan"><b>Make the family plan</b><span class="glabel">Roles, meeting points, elderly care, out-of-city contact</span></div>
       <div class="gcard"><span class="gnum">5</span><img src="assets/guide-step5.jpg" alt="Build your kit"><b>Build your kit</b><span class="glabel">Tiered shopping list with direct product links</span></div>
@@ -87,6 +87,16 @@
 
 <script src="data.js"></script>
 <script src="app.js"></script>
+
+<div id="drillModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Three minute evacuation drill">
+  <div class="modal-card">
+    <div class="drill-head"><b>🏃 3-minute evacuation drill</b><button id="drillClose" class="x" aria-label="Close">✕</button></div>
+    <div id="drillTimer" class="drill-timer">3:00</div>
+    <ul id="drillList" class="drill-list"></ul>
+    <div id="drillDone" class="drill-done hidden">✅ Done! Review what took longest, then fix it.</div>
+    <button id="drillStart" class="btn primary drill-start">▶ Start drill</button>
+  </div>
+</div>
 </body>
 </html>
 

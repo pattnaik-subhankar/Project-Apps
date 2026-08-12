@@ -23,7 +23,7 @@ India is among the most disaster-prone countries in the world: cyclones (Odisha 
 
 ## 4. Scope
 ### 4.1 In scope (v1 — live)
-- 46 Indian cities with risk profiles (cyclone, flood, BIS seismic zone, heatwave, tsunami/surge)
+- 63 cities & towns with risk profiles (cyclone, flood, BIS seismic zone, heatwave, tsunami/surge)
 - Personalized plan generation: 21 sections, adaptive to city risk
 - Interactive checklists with automatic save + preparedness % bar
 - Emergency numbers (national + state), family plan, 72-hour playbook, 2-week sustain

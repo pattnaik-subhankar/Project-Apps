@@ -138,6 +138,69 @@
   function riskCls(l) { return l >= 3 ? "high" : l === 2 ? "med" : "low"; }
 
   function waterLitres(c) { return c.flood >= 2 ? 240 : 225; } // flood areas store a bit more
+
+  /* ---------- seasonal awareness (calendar-based, works offline) ---------- */
+  function seasonCallout(c) {
+    const m = new Date().getMonth() + 1; // 1..12
+    let t = "", pts = [];
+    if (c.cyc >= 2 && ((m >= 4 && m <= 6) || (m >= 10 && m <= 12))) {
+      t = "🌪️ Cyclone season is on";
+      pts = ["Board/tape windows this week if not done", "Test the crank radio + charge power banks", "Confirm go-bags and the safe inner room", "Keep cash + documents pouch within reach"];
+    } else if (c.flood >= 2 && m >= 6 && m <= 9) {
+      t = "🌧️ Monsoon: flood readiness";
+      pts = ["Clear roof drains & gutters now", "Sandbags at doors; valuables raised", "Keep the car above half fuel", "Know two exits from your area"];
+    } else if (c.heat >= 2 && m >= 3 && m <= 6) {
+      t = "☀️ Heatwave season";
+      pts = ["Check parents twice daily 11 AM–4 PM", "ORS + battery fans + ice packs ready", "Shade cloth on west windows", "No outdoor walks for 60+ in peak heat"];
+    } else if (m >= 11 || m <= 2) {
+      t = "🧥 Winter check";
+      pts = ["Warm blankets + clothes in go-bags", "Test fire extinguisher + smoke alarm", "Review pantry rotation"];
+    } else {
+      t = "📋 Month-end readiness";
+      pts = ["Go-bag check on the 1st", "Rotate 6-month-old pantry stock", "Review your family drill"];
+    }
+    return `<div class="seasonal"><b>${t}</b>${ul(pts)}</div>`;
+  }
+
+  /* ---------- 3-minute evacuation drill ---------- */
+  const DRILL_ITEMS = ["Grab your go-bag", "Fill 2 containers with water", "Charge both power banks", "Collect documents pouch + cash", "Switch off main power (practice)", "Move to the safe inner room", "Whistle 3 times (signal practice)"];
+  let drillTimer = null, drillEnd = 0;
+  function lastDrillText() {
+    try {
+      const d = localStorage.getItem("readyhome_last_drill");
+      return d ? "Last drill: " + new Date(d).toLocaleDateString("en-IN") : "No drill yet — try one today";
+    } catch (e) { return ""; }
+  }
+  function openDrill() {
+    const m = $("drillModal"); if (!m) return;
+    m.classList.remove("hidden");
+    $("drillTimer").textContent = "3:00";
+    $("drillList").innerHTML = DRILL_ITEMS.map((it, i) => `<li><label><input type="checkbox" data-i="${i}"> ${it}</label></li>`).join("");
+    $("drillDone").classList.add("hidden");
+    $("drillStart").textContent = "▶ Start drill";
+    $("drillStart").disabled = false;
+  }
+  function closeDrill() {
+    const m = $("drillModal"); if (m) m.classList.add("hidden");
+    if (drillTimer) { clearInterval(drillTimer); drillTimer = null; }
+  }
+  function startDrill() {
+    const btn = $("drillStart"); if (!btn) return;
+    btn.disabled = true; btn.textContent = "Drill running…";
+    drillEnd = Date.now() + 180000;
+    drillTimer = setInterval(function () {
+      const left = Math.max(0, drillEnd - Date.now());
+      const mm = Math.floor(left / 60000), ss = Math.floor((left % 60000) / 1000);
+      $("drillTimer").textContent = mm + ":" + String(ss).padStart(2, "0");
+      if (left === 0) {
+        clearInterval(drillTimer); drillTimer = null;
+        $("drillDone").classList.remove("hidden");
+        try { localStorage.setItem("readyhome_last_drill", new Date().toISOString()); } catch (e) {}
+        const ld = $("lastDrill"); if (ld) ld.textContent = "Last drill: " + new Date().toLocaleDateString("en-IN");
+        btn.textContent = "▶ Run again"; btn.disabled = false;
+      }
+    }, 250);
+  }
   function quakeEmphasis(c) { return c.quake >= 4; }
   function cycloneEmphasis(c) { return c.cyc >= 2; }
   function heatEmphasis(c) { return c.heat >= 2; }
@@ -172,6 +235,7 @@
 
     const content = {
       overview: () => `
+        ${seasonCallout(c)}
         <div class="risk-grid">
           ${Object.values(risk).map(r => `
             <div class="risk-card ${r.cls}">
@@ -192,13 +256,18 @@
           <a class="callbtn" href="tel:1078">📞 NDMA 1078</a>
         </div>
         <p class="note">Save <b>112</b> as ICE on every family phone. Print this section and pin it near the door. Phones die in disasters — paper doesn't.</p>`,
-      family: () => checklist("family", [
+      family: () => `
+        <div class="drillbar">
+          <button id="drillBtn" class="btn primary">🏃 Run a 3-minute drill</button>
+          <span id="lastDrill" class="drill-last">${lastDrillText()}</span>
+        </div>
+        ${checklist("family", [
         "Assign roles: commander (power/go-bags), food & water, documents & cash, medical kit",
         "Meeting points: (A) strongest inner room · (B) open ground nearby · (C) out-of-city relative",
         "Pick one relative outside the state as the check-in line (SMS works when calls fail)",
         "Full home drill every 3 months · go-bag check on the 1st of every month",
         "Elderly plan: one adult always knows where parents' meds are",
-      ]),
+      ])}`,
       h72: () => `
         <div class="cols3">
           <div class="colc"><h4>⏱ Hours 0–6 · warning</h4>${ul(["Fill every container + buckets with water", "Charge all phones + power banks", "Move to the safe inner room", "Board/tape windows, secure loose items", "Withdraw cash — ATMs will fail", "Bring elderly & pets inside"])}</div>
@@ -531,6 +600,12 @@
     renderSuggestions("");
     // default: Bhubaneswar (home)
     generate("Bhubaneswar");
+    document.addEventListener("click", function (e) {
+      const t = e.target;
+      if (t.closest && t.closest("#drillBtn")) openDrill();
+      else if (t.closest && t.closest("#drillClose")) closeDrill();
+      else if (t.closest && t.closest("#drillStart")) startDrill();
+    });
     if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
       navigator.serviceWorker.register("sw.js").catch(() => {});
     }
