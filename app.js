@@ -184,24 +184,49 @@
       renderAlerts();
     } catch (e) { /* offline or blocked — seasonal callout still covers context */ }
   }
+  function alertSeverity(a) {
+    const s = norm(a.title + " " + a.desc);
+    if (s.includes("extremelyheavy") || s.includes("extreme") || s.includes("cyclone") || s.includes("stormsurge") || s.includes("torrential")) return "extreme";
+    if (s.includes("veryheavy") || s.includes("heatwave") || s.includes("flashflood") || s.includes("landslide")) return "high";
+    if (s.includes("heavy") || s.includes("thunderstorm") || s.includes("strongwind")) return "med";
+    return "info";
+  }
   function alertBanner(c) {
     if (!alertsCache || !alertsCache.length) return "";
     const stateTok = norm(c.s);
     const cityTok = norm(c.n);
     const now = Date.now();
+    const seen = new Set();
     const hits = alertsCache.filter(a => {
       const t = a.date ? new Date(a.date).getTime() : NaN;
       if (!isNaN(t) && (now - t) > 72 * 3600000) return false; // only recent warnings
       const hay = norm(a.title + " " + a.desc);
-      return (stateTok && hay.includes(stateTok)) || (cityTok && hay.includes(cityTok));
+      if (!((stateTok && hay.includes(stateTok)) || (cityTok && hay.includes(cityTok)))) return false;
+      if (seen.has(a.title)) return false; // dedupe identical titles
+      seen.add(a.title);
+      return true;
     }).slice(0, 2);
     if (!hits.length) return "";
-    return hits.map(a => `<div class="alertbanner"><b>⚠️ IMD active warning: ${a.title}</b><span>${a.desc} · issued ${(a.date || "").slice(5, 16)}</span></div>`).join("");
+    return hits.map(a => `<div class="alertbanner ${alertSeverity(a)}"><b>⚠️ IMD active warning: ${a.title}</b><span>${a.desc} · issued ${(a.date || "").slice(5, 16)}</span></div>`).join("");
   }
   function renderAlerts() {
     const slot = $("alertSlot");
     if (!slot || !plan) return;
     slot.innerHTML = alertBanner(plan.city);
+  }
+
+  function mapCard(c) {
+    const padLng = 0.22, padLat = 0.18;
+    const embed = `https://www.openstreetmap.org/export/embed.html?bbox=${c.lng - padLng},${c.lat - padLat},${c.lng + padLng},${c.lat + padLat}&layer=mapnik&marker=${c.lat},${c.lng}`;
+    return `<div class="mapcard">
+      <div class="map-head"><b>🗺️ Map & shelter view</b><a href="${embed}" target="_blank" rel="noopener">Open in OSM ↗</a></div>
+      <iframe class="mapframe" loading="lazy" src="${embed}" title="Map of ${c.n}, ${c.s}"></iframe>
+      <div class="map-links">
+        <a href="https://www.openstreetmap.org/search?query=cyclone%20shelter%20near%20${encodeURIComponent(c.n)}" target="_blank" rel="noopener">Find cyclone shelters near ${c.n} (OSM)</a>
+        <a href="https://www.google.com/maps/search/cyclone+shelter+${encodeURIComponent(c.n)}" target="_blank" rel="noopener">Google Maps</a>
+      </div>
+      <p class="note">Shelter availability changes with the season — confirm with your district control room before an emergency. ${c.emg || ""}</p>
+    </div>`;
   }
 
   /* ---------- kit & expiry tracker ---------- */
@@ -345,7 +370,8 @@
             </div>`).join("")}
         </div>
         <p class="note">${c.note || ""} ${c.emg ? "State emergency: " + c.emg : ""}</p>
-        <div class="callout"><b>How this plan adapts:</b> ${adaptLine(c)}</div>`,
+        <div class="callout"><b>How this plan adapts:</b> ${adaptLine(c)}</div>
+        ${mapCard(c)}`,
       numbers: () => `
         <div class="emg-grid">
           ${NATIONAL_EMG.map(e => `<div class="emg-card"><b><a href="tel:${e[0]}">${e[0]}</a></b><span>${e[1]}</span></div>`).join("")}
@@ -678,8 +704,22 @@
     }
     $("locInput").value = c.n + ", " + c.s;
     plan = buildPlan(c);
+    history.replaceState(null, "", "#plan/" + encodeURIComponent(c.n));
     $("planView").classList.remove("hidden");
     renderPlan();
+  }
+
+  function copyText(t) {
+    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t);
+    return new Promise(function (res, rej) {
+      const i = document.createElement("input");
+      i.value = t; document.body.appendChild(i); i.select();
+      try { document.execCommand("copy"); res(); } catch (e) { rej(e); }
+      i.remove();
+    });
+  }
+  function planUrl() {
+    return location.origin + location.pathname + "#plan/" + encodeURIComponent(plan ? plan.city.n : "");
   }
 
   function init() {
@@ -708,8 +748,28 @@
       }
     };
     renderSuggestions("");
-    // default: Bhubaneswar (home)
-    generate("Bhubaneswar");
+    const h = (location.hash || "").match(/^#plan\/(.+)$/);
+    if (h) {
+      try { const nm = decodeURIComponent(h[1]); if (resolveCity(nm)) { generate(nm); } else { generate("Bhubaneswar"); } }
+      catch (e) { generate("Bhubaneswar"); }
+    } else {
+      generate("Bhubaneswar");
+    }
+    window.addEventListener("hashchange", function () {
+      const m = (location.hash || "").match(/^#plan\/(.+)$/);
+      if (m) { try { const nm = decodeURIComponent(m[1]); if (resolveCity(nm)) generate(nm); } catch (e) {} }
+    });
+    $("copyBtn").onclick = function () {
+      copyText(planUrl()).then(function () {
+        $("copyBtn").textContent = "✅ Copied";
+        setTimeout(function () { $("copyBtn").textContent = "🔗 Link"; }, 1600);
+      }).catch(function () {});
+    };
+    $("waBtn").onclick = function () {
+      if (!plan) return;
+      const txt = encodeURIComponent("My ReadyHome preparedness plan for " + plan.city.n + ": " + planUrl());
+      window.open("https://wa.me/?text=" + txt, "_blank", "noopener");
+    };
     document.addEventListener("click", function (e) {
       const t = e.target;
       if (t.closest && t.closest("#drillBtn")) openDrill();

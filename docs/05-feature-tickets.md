@@ -74,9 +74,12 @@ Legend: **P0** shipped · **P1** next · **P2** later. Format: user story → ac
 - Aliyun FC/Cloudflare Worker renders plan → PDF (reportlab/paged.js)
 - Deep-linkable: `…/api/pdf?city=bhubaneswar`
 
-### T-RH-104 Shelter & helpline map
-> As a user, I see the nearest cyclone shelter / flood-safe zone.
-- Static map per city (OSM embed) with NDMA-listed shelters; fallback table for offline
+### T-RH-104 Shelter & helpline map — ✅ v1.2 (partial)
+> As a user, I see my city on a map and can find shelters.
+- [x] OSM embed map card in the Overview panel (no API key, lazy-loaded)
+- [x] One-click "find cyclone shelters near <city>" on OSM + Google Maps
+- [x] District control room reminder (shelter availability changes by season)
+- [ ] (next) curated shelter coordinates per city + offline fallback table
 
 ---
 

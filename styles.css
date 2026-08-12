@@ -248,6 +248,21 @@ ul.chk { list-style: none; }
 .kit-rm:hover { background: var(--terra-soft); color: var(--wine); }
 .kit-empty { color: var(--ink-faint); font-size: 13px; padding: 6px 2px; }
 
+/* alert severity colours */
+.alertbanner.extreme { background: #f3d5cd; border-color: #d99a8c; border-left-color: var(--wine); }
+.alertbanner.high { background: #fae3d2; border-color: #e8bf9e; border-left-color: #c75b1e; }
+.alertbanner.med { background: var(--saffron-soft); border-color: #e5c998; border-left-color: var(--saffron); }
+.alertbanner.info { background: var(--ocean-soft); border-color: #bfd4de; border-left-color: var(--ocean); }
+
+/* map & shelter card */
+.mapcard { margin-top: 14px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--card); box-shadow: var(--shadow); }
+.map-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; font-size: 14px; }
+.map-head a { font-size: 12px; color: var(--ocean); text-decoration: none; }
+.mapframe { width: 100%; height: 260px; border: 0; display: block; }
+.map-links { display: flex; gap: 14px; flex-wrap: wrap; padding: 10px 14px 0; font-size: 12.5px; }
+.map-links a { color: var(--ocean); }
+.mapcard .note { padding: 8px 14px 12px; }
+
 /* footer */
 footer {
   margin-top: 60px; border-top: 1px solid var(--line); background: var(--paper-2); padding: 30px 0 36px; font-size: 12.5px; color: var(--ink-faint); line-height: 1.7;

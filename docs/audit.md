@@ -62,3 +62,10 @@ eadyhome_kit, 100-item cap. Verified: add → reload → persists.
 - Docs updated: PRD F-table (F13/F14), tickets T-RH-201/204 moved to shipped, system design storage + CAP feed, frontend spec components.
 
 New known limitation: CAP feed warnings are state-level text matches; district-level granularity + severity colours = next step.
+
+## Addendum v1.2 (2026-08-12)
+
+- **Alert severity colours** — warnings classified (extreme/high/med/info) with colour-coded banners; duplicate-titled warnings deduped.
+- **Map & shelter card (T-RH-104 partial)** — OSM embed in Overview (no API key, lazy), shelter search links (OSM + Google Maps), district-control-room reminder.
+- **Shareable deep links** — plans live at `#plan/<city>` (replaceState, deep-linkable + refresh-safe); 🔗 Link (clipboard copy) and 📲 Share (WhatsApp) buttons added to the topbar.
+- Section counts unchanged (map lives inside Overview).

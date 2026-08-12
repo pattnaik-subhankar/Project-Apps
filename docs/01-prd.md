@@ -52,7 +52,7 @@ India is among the most disaster-prone countries in the world: cyclones (Odisha 
 | F8 | More cities (district-level Odisha first) | P1 | backlog |
 | F9 | Multilingual (Odia, Hindi, Tamil, Telugu, Bengali) | P1 | backlog |
 | F10 | Server-side printable PDF | P1 | backlog |
-| F11 | IMD warning integration / shelter maps | ⏳ banner live (v1.1), shelter maps P1 | P2 | backlog |
+| F11 | IMD warning integration / shelter maps | ✅ banner live (v1.1) + OSM map card (v1.2); curated shelter data P2 | P2 | backlog |
 | F12 | Offline PWA support | ✅ live (v1) | P2 | ✅ live |
 | F13 | Kit & expiry tracker (localStorage inventory) | P1 | ✅ live (v1.1) |
 | F14 | Live IMD warning banner (official CAP feed) | P1 | ✅ live (v1.1) |
