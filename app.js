@@ -14,7 +14,7 @@
   /* ---------- i18n (en/hi shipped; od/ta slot in as data) ---------- */
   let lang = store.get("lang") || "en";
   let noScroll = false;
-  const L = {
+  const TR = {
     en: {
       brand_sub: "Disaster preparedness, personalised",
       print: "🖨 Print / PDF", dl: "⬇ Plan (.md)", link: "🔗 Link", share: "📲 Share", reset: "↺ Reset",
@@ -79,7 +79,7 @@
     },
   };
   function t(k, v) {
-    let s = (L[lang] && L[lang][k]) || L.en[k] || k;
+    let s = (TR[lang] && TR[lang][k]) || TR.en[k] || k;
     if (v) Object.keys(v).forEach(x => { s = s.split("{" + x + "}").join(v[x]); });
     return s;
   }
