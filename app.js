@@ -188,7 +188,10 @@
     if (!alertsCache || !alertsCache.length) return "";
     const stateTok = norm(c.s);
     const cityTok = norm(c.n);
+    const now = Date.now();
     const hits = alertsCache.filter(a => {
+      const t = a.date ? new Date(a.date).getTime() : NaN;
+      if (!isNaN(t) && (now - t) > 72 * 3600000) return false; // only recent warnings
       const hay = norm(a.title + " " + a.desc);
       return (stateTok && hay.includes(stateTok)) || (cityTok && hay.includes(cityTok));
     }).slice(0, 2);
@@ -599,6 +602,7 @@
     document.querySelectorAll("#tabs .tab").forEach(t => t.classList.toggle("active", t.dataset.sec === id));
     $("secTitle").textContent = sec.icon + "  " + sec.title;
     $("secBody").innerHTML = plan.content[id]();
+    if (id === "kit") renderKit();
     $("secBody").querySelectorAll("input[data-chk]").forEach(cb => cb.onchange = () => {
       const saved = store.get("chk_" + cb.dataset.chk, {});
       saved[cb.id] = cb.checked;
