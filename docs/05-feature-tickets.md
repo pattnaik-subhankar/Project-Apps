@@ -67,7 +67,7 @@ Legend: **P0** shipped · **P1** next · **P2** later. Format: user story → ac
 ### T-RH-102 Multilingual (Odia, Hindi, Tamil, Telugu, Bengali)
 > As a user who reads Odia/Tamil, I get the plan in my language.
 - ✅ 2026-08-12: i18n framework + Hindi UI (topbar, hero, guide, 22 section titles, risk labels, alerts, kit, drill, footer); persisted switcher; checklists stay English until native review
-- [ ] Odia + Tamil as pure dictionary data (framework ready); native review for checklist content
+- ✅ Odia + Tamil shipped (2026-08-12): 109 keys each, 4-language switcher; checklist content pending native review
 
 ### T-RH-103 Server-side printable PDF
 > As a user, I get a designed PDF (cover + illustrations), not a browser printout.

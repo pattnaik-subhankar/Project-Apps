@@ -89,3 +89,10 @@ eadyhome-v3 (shelters.js precached).
 - **Translated**: topbar buttons, hero (incl. lede + search), 7-step guide, all 22 section titles, risk labels + HIGH/MODERATE/LOW, risk chips, seasonal callout headers, IMD alert banners (prefix + Your area/state/Regional tags), kit badges/placeholders/categories, drill modal, progress line, footer. **Checklists stay English** — honest lang-note shown in hero; native review needed before content translation.
 - **Bugs caught in verification (lesson-worthy)**: (1) i18n dict named `L` shadowed the **Leaflet global `L`** inside the IIFE — map silently never initialized (retry branch made it error-free); renamed dict → `TR`. (2) `alertBanner`'s local `const t` (timestamp) shadowed the `t()` translator once i18n landed. (3) Deferred unpkg Leaflet script + DOMContentLoaded race → initLeaflet self-retry (250 ms) added. All fixed and verified live.
 - SW bumped to `readyhome-v4`.
+
+## Addendum v1.4b (2026-08-12) — Odia + Tamil shipped (T-RH-102 complete)
+
+- **Odia + Tamil dictionaries added as pure data** (109 keys each, verified parity with en/hi, zero missing keys). Switcher now has **4 languages**: English / हिंदी / ଓଡ଼ିଆ / தமிழ்.
+- Verified live: all four render section titles, risk labels, progress line, topbar; Leaflet map renders in every language (6 markers); Odia persists across reload; zero page errors.
+- Honest boundary unchanged: checklist content stays English until native review (lang-note per language).
+- Note: the earlier "Odia/Tamil" attempt died to an LLM timeout mid-turn (nothing was written) — re-done this pass; lesson: verify file state after timeout-recovery turns, don't trust the last status message.
