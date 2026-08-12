@@ -33,7 +33,7 @@
 |---|---|---|
 | App shell | `index.html` | semantic layout, meta, guide section |
 | Design system | `styles.css` | tokens (CSS vars), layout, responsive, print |
-| Data layer | `data.js` | `CITIES` (63 records) + `NATIONAL_EMG` |
+| Data layer | `data.js` | `CITIES` (65 records) + `NATIONAL_EMG` |
 | Orchestrator | `app.js` | location resolution, plan generation, rendering, state |
 | Assets | `assets/*.jpg` | 20 section illustrations + 7 guide illustrations |
 

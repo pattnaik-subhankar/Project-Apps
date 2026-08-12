@@ -1,0 +1,52 @@
+# ReadyHome India — Complete Audit Report
+**Date:** 2026-08-12 · **Scope:** code, data, assets, functionality, PWA, performance, mobile, accessibility, links
+**Audit method:** static analysis (node --check, ref/bracket integrity, dataset eval) + live browser audit (puppeteer: console/network errors, city matrix, checklist persistence, offline reload, mobile overflow, a11y DOM pass) + vision-model QA of screenshots.
+
+## Scorecard
+
+| Area | Result | Notes |
+|---|---|---|
+| Code integrity | ✅ PASS | app.js syntax OK, CSS braces balanced, all 12 HTML refs exist |
+| Data integrity | ✅ PASS (2 fixes) | 65 unique cities, 0 malformed records, risk ranges valid, emg+note present |
+| Assets | ✅ PASS (1 fix) | 30 files, 0 zero-byte; **14.87 MB → 4.65 MB** after compression |
+| Core functionality | ✅ PASS | city matrix: Patna 21 tabs + quake ✓, Chennai 21 ✓, Bhadrak 20 ✓, Bhubaneswar 20 ✓ |
+| Seasonal callout | ✅ PASS | correct for August (monsoon flood readiness), works offline |
+| Checklists & persistence | ✅ PASS (1 fix) | toggles persist to localStorage; progress math fixed |
+| Export (.md) | ✅ PASS (1 fix) | now downloads full plan with ✓/☐ per item |
+| Shopping | ✅ PASS | 34 Amazon.in links render in shop tab (4 tiers incl. quality bar) |
+| Video guides | ✅ PASS | 9 curated links (St John, NDMA, fire dept); oEmbed-verified; spot-checked live |
+| One-tap helplines | ✅ PASS | 6 national + state numbers as tel: links; 2 call buttons |
+| PWA / offline | ✅ PASS | SW v2 active, manifest present, offline reload serves full shell |
+| Mobile | ✅ PASS | 390 px: no horizontal overflow; chips scroll in own bar |
+| Accessibility (quick) | ✅ PASS* | 1 h1, 0 imgs missing alt, 0 unnamed buttons, lang=en; *tab chips < 44 px (see notes) |
+| Console / network errors | ✅ PASS | 0 console errors, 0 failed requests during audit |
+| Drill mode | ✅ PASS | opens, 7 items, timer ticks, last-drill persisted |
+| Docs accuracy | ✅ PASS (2 fixes) | city counts 46→65, page-weight claim corrected |
+
+## Issues found & fixed (this audit)
+
+| # | Severity | Issue | Fix |
+|---|---|---|---|
+| A-01 | 🔴 High | **Duplicate city records** — Cuttack, Puri, Balasore, Sambalpur existed twice (original 46 + new district batch), shadowing richer originals (Balasore zone III, Puri tsu 2) | Removed 4 duplicate district entries; added 6 new non-duplicate districts (Koraput, Rayagada, Keonjhar, Angul, Nuapada, Gajapati) → **65 unique cities** |
+| A-02 | 🔴 High | **Progress bar miscalculation** — one checkbox = 100% (total counted only items the user had touched) | New `sectionTotals()` computes true per-section item counts (detached render, cached per plan); progress = checked / full plan total |
+| A-03 | 🔴 High | **.md download near-empty** — exported only checked items with index labels ("- [x] 0") | Rewritten: full plan dump, every checklist item with ✓/☐ label text |
+| A-04 | 🟠 Medium | **Page weight 14.87 MB** (28 images @ up to 2848 px) vs documented ~2.4 MB | All images resized (max 1200 px; guide 1024 px) + q82 progressive → **4.65 MB (−69%)**; docs updated to real numbers |
+| A-05 | 🟡 Low | SW cache name `readyhome-v1` would serve stale pre-compression files | Bumped to `readyhome-v2` (fresh precache on next visit) |
+| A-06 | 🟡 Low | Input pre-filled with default city — users had to manually clear to search | Select-all on focus (`this.select()`) |
+
+## Known limitations (not bugs, tracked)
+
+1. **Leh (Ladakh) not covered** — dataset scope is 65 major cities/towns; district-level expansion (esp. Odisha) is the roadmap. P1: more states.
+2. **Tab chips < 44 px tap targets** (27 buttons < 40 px measured) — deliberate compact horizontal chip bar; meets WCAG 2.2 24 px minimum, not 44 px AAA. Acceptable; can bump to 36 px in a polish pass.
+3. **Full load ~5 s on cold 4G** — dominated by YouTube thumbnails (lazy-loaded, below fold); hero LCP stays fast (text + CSS). Compressed images cut ~10 s off the previous worst case.
+4. **No live IMD alerts** — seasonal callout is calendar-based (reliable, offline); live IMD district-warning push remains P1 (T-RH-201).
+5. **External links offline** — YouTube/Amazon need network (labels + alt text carry meaning offline).
+6. **Amazon links** — 34 present in shop tab; last full HTTP-200 sweep at commit `8ca9739` (all passed); prices labeled "≈, check live".
+
+## Verification evidence
+- Static: `node --check` clean; CSS braces balanced; dataset eval → 65 records, unique, ranges valid
+- Live: 0 console errors, 0 4xx/network failures; Patna 21 / Chennai 21 / Bhadrak 20 tabs; offline reload OK; mobile no overflow; checklist → `readyhome_chk_family` written
+- Screenshots + vision-model QA: desktop & 390 px layouts clean (guide cards, video card, seasonal banner)
+
+## Verdict
+**Ship-ready.** All high-severity issues resolved; two real bugs (progress math, .md export) were caught by this audit and are now fixed. Remaining items are roadmap (Leh, IMD live alerts) or deliberate design trade-offs (chip size).

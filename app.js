@@ -510,20 +510,27 @@
     $("planView").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  function renderProgress() {
-    const keys = {};
-    document.querySelectorAll("#secBody input[data-chk]").forEach(cb => { keys[cb.dataset.chk] = true; });
-    let done = 0, total = 0;
-    Object.keys(keys).forEach(k => {
-      const saved = store.get("chk_" + k, {});
-      Object.values(saved).forEach(v => { total++; if (v) done++; });
+  function sectionTotals() {
+    if (plan._totals) return plan._totals;
+    const t = {};
+    plan.sections.forEach(function (sec) {
+      try {
+        const div = document.createElement("div");
+        div.innerHTML = plan.content[sec.id]();
+        t[sec.id] = div.querySelectorAll("input[data-chk]").length;
+      } catch (e) { t[sec.id] = 0; }
     });
-    // include all sections for a global count
-    plan.sections.forEach(sec => {
-      if (sec.id === "overview" || sec.id === "numbers") return;
-      const saved = store.get("chk_" + sec.id, {});
-      total += Object.keys(saved).length;
-      done += Object.values(saved).filter(Boolean).length;
+    plan._totals = t;
+    return t;
+  }
+  function renderProgress() {
+    const totals = sectionTotals();
+    let done = 0, total = 0;
+    Object.keys(totals).forEach(function (k) {
+      if (k === "overview" || k === "numbers") return;
+      total += totals[k];
+      const saved = store.get("chk_" + k, {});
+      Object.values(saved).forEach(function (v) { if (v) done++; });
     });
     const pct = total ? Math.round(100 * done / total) : 0;
     $("progBar").style.width = pct + "%";
@@ -538,17 +545,16 @@
     plan.sections.forEach(sec => {
       if (sec.id === "overview" || sec.id === "numbers" || sec.id === "shop") return;
       md += "## " + sec.icon + " " + sec.title + "\n";
-      const saved = store.get("chk_" + sec.id, {});
-      const items = $("secBody") ? null : null;
-      md += "\n";
-    });
-    // simpler: dump checklist state
-    plan.sections.forEach(sec => {
-      const saved = store.get("chk_" + sec.id, {});
-      const entries = Object.entries(saved);
-      if (!entries.length) return;
-      md += "## " + sec.title + "\n";
-      entries.forEach(([id, v]) => { md += "- [" + (v ? "x" : " ") + "] " + id.split("_").slice(1).join(" ") + "\n"; });
+      try {
+        const div = document.createElement("div");
+        div.innerHTML = plan.content[sec.id]();
+        const saved = store.get("chk_" + sec.id, {});
+        div.querySelectorAll("input[data-chk]").forEach(function (cb) {
+          const label = cb.parentElement && cb.parentElement.querySelector("label") ? cb.parentElement.querySelector("label").innerText : cb.id;
+          const done = cb.checked || !!saved[cb.id];
+          md += "- [" + (done ? "x" : " ") + "] " + label + "\n";
+        });
+      } catch (e) {}
       md += "\n";
     });
     md += "\n_Source: ReadyHome India · government records (IMD/NDMA/BIS) are authoritative for official decisions_";
@@ -575,6 +581,7 @@
 
   function init() {
     $("locInput").addEventListener("input", e => renderSuggestions(e.target.value.trim()));
+    $("locInput").addEventListener("focus", function () { this.select(); });
     $("locInput").addEventListener("keydown", e => { if (e.key === "Enter") { $("suggestions").classList.add("hidden"); generate(); } });
     $("goBtn").onclick = () => { $("suggestions").classList.add("hidden"); generate(); };
     $("geoBtn").onclick = () => {

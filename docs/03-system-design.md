@@ -63,7 +63,7 @@ Single-user-per-browser, zero-backend. One logical "system": a static web app. N
 | Old cached JS/CSS | version drift | immutable filenames on next deploy; hard-refresh note in README |
 
 ## 7. Performance budget
-- Total page weight: ~2.4 MB (dominated by 27 illustration JPEGs, avg ~80 KB)
+- Total page weight: ~5 MB (28 illustrations + 7 guide images, avg ~140 KB, compressed Aug 2026 from 14.9 MB)
 - LCP: <1.5 s on 4G (hero is CSS/text; images lazy-load below fold)
 - JS: single file, no framework, no external libs → zero blocking third-party requests
 - Render: pure DOM creation (~200 nodes), no reflows beyond batch insert
