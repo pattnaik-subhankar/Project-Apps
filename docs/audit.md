@@ -82,3 +82,10 @@ eadyhome-v3 (shelters.js precached).
 
 - Amritsar curated (5 points: hospitals + Ram Bagh Police Station) → **63/65 cities, 327 points**.
 - **Alert engine v2**: fetchAlerts now fetches each recent item's linked CAP XML and parses authoritative `<cap:severity>` + `<cap:areaDesc>`; banners tag matches as "Your area" (district/city in areaDesc) vs "Your state" vs "Regional"; severity colors come from the CAP field (Extreme→extreme, Severe→high, Moderate→med, Minor→info) with keyword fallback. Verified: Bhubaneswar→Kerala-Odisha item (state tag), Jaipur→East Rajasthan item (state tag).
+
+## Addendum v1.4 (2026-08-12) — i18n framework + Hindi UI (T-RH-102 partial)
+
+- **i18n framework shipped**: `TR` dictionaries (en/hi), `t()` helper with `{var}` interpolation, `applyLang()` re-renders static chrome + rebuilds the live plan, language switcher in topbar, persisted (`readyhome_lang`), `<html lang>` synced. Odia/Tamil slot in as pure data later.
+- **Translated**: topbar buttons, hero (incl. lede + search), 7-step guide, all 22 section titles, risk labels + HIGH/MODERATE/LOW, risk chips, seasonal callout headers, IMD alert banners (prefix + Your area/state/Regional tags), kit badges/placeholders/categories, drill modal, progress line, footer. **Checklists stay English** — honest lang-note shown in hero; native review needed before content translation.
+- **Bugs caught in verification (lesson-worthy)**: (1) i18n dict named `L` shadowed the **Leaflet global `L`** inside the IIFE — map silently never initialized (retry branch made it error-free); renamed dict → `TR`. (2) `alertBanner`'s local `const t` (timestamp) shadowed the `t()` translator once i18n landed. (3) Deferred unpkg Leaflet script + DOMContentLoaded race → initLeaflet self-retry (250 ms) added. All fixed and verified live.
+- SW bumped to `readyhome-v4`.
