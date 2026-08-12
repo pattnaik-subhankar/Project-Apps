@@ -185,7 +185,7 @@
       numbers: () => `
         <div class="emg-grid">
           ${NATIONAL_EMG.map(e => `<div class="emg-card"><b><a href="tel:${e[0]}">${e[0]}</a></b><span>${e[1]}</span></div>`).join("")}
-          ${c.emg ? `<div class="emg-card wide"><b>${c.emg.split("·")[0].trim()}</b><span>${telLinks(c.emg.split("·").slice(1).join(" · ").trim()) || "State emergency contact"}</span></div>` : ""}
+          ${c.emg ? `<div class="emg-card wide"><b>${telLinks(c.emg.split("·")[0].trim())}</b><span>${telLinks(c.emg.split("·").slice(1).join(" · ").trim()) || "State emergency contact"}</span></div>` : ""}
         </div>
         <div class="callrow">
           <a class="callbtn" href="tel:112">📞 Call 112</a>
