@@ -162,6 +162,102 @@
     return `<div class="seasonal"><b>${t}</b>${ul(pts)}</div>`;
   }
 
+  /* ---------- live IMD alerts (official CAP feed, CORS-open) ---------- */
+  const ALERTS_URL = "https://cap-sources.s3.amazonaws.com/in-imd-en/rss.xml";
+  let alertsCache = null;
+  async function fetchAlerts() {
+    try {
+      const cached = store.get("alerts", null);
+      if (cached && Date.now() - cached.t < 15 * 60000) { alertsCache = cached.list; renderAlerts(); return; }
+      const res = await fetch(ALERTS_URL, { headers: { Accept: "application/rss+xml" } });
+      if (!res.ok) return;
+      const xml = await res.text();
+      const doc = new DOMParser().parseFromString(xml, "text/xml");
+      const items = [...doc.querySelectorAll("item")].map(it => ({
+        title: (it.querySelector("title") || {}).textContent || "",
+        desc: (it.querySelector("description") || {}).textContent || "",
+        cat: (it.querySelector("category") || {}).textContent || "",
+        date: (it.querySelector("pubDate") || {}).textContent || "",
+      }));
+      store.set("alerts", { t: Date.now(), list: items });
+      alertsCache = items;
+      renderAlerts();
+    } catch (e) { /* offline or blocked — seasonal callout still covers context */ }
+  }
+  function alertBanner(c) {
+    if (!alertsCache || !alertsCache.length) return "";
+    const stateTok = norm(c.s);
+    const cityTok = norm(c.n);
+    const hits = alertsCache.filter(a => {
+      const hay = norm(a.title + " " + a.desc);
+      return (stateTok && hay.includes(stateTok)) || (cityTok && hay.includes(cityTok));
+    }).slice(0, 2);
+    if (!hits.length) return "";
+    return hits.map(a => `<div class="alertbanner"><b>⚠️ IMD active warning: ${a.title}</b><span>${a.desc} · issued ${(a.date || "").slice(5, 16)}</span></div>`).join("");
+  }
+  function renderAlerts() {
+    const slot = $("alertSlot");
+    if (!slot || !plan) return;
+    slot.innerHTML = alertBanner(plan.city);
+  }
+
+  /* ---------- kit & expiry tracker ---------- */
+  function kitHTML() {
+    return `
+      <div class="kitbox">
+        <form id="kitForm" class="kit-form" autocomplete="off">
+          <input id="kitName" placeholder="Item — e.g. Aquatabs 30pk, Dal 5kg, Batteries" required maxlength="60">
+          <select id="kitCat">
+            <option>Water</option><option>Food</option><option>Power</option><option>First aid</option><option>Tools</option><option>Other</option>
+          </select>
+          <input id="kitExp" type="date" required>
+          <button class="btn primary" type="submit">+ Add</button>
+        </form>
+        <div id="kitList"></div>
+        <p class="note">Rotate: eat the oldest stock first. Expired ≠ useless — check quality, but dispose expired medicines safely. Your tracker lives only in this browser.</p>
+      </div>`;
+  }
+  function daysLeft(iso) {
+    const t = new Date(iso + "T00:00:00");
+    if (isNaN(t)) return null;
+    return Math.ceil((t - new Date(new Date().toDateString())) / 86400000);
+  }
+  function renderKit() {
+    const box = $("kitList");
+    if (!box) return;
+    const items = store.get("kit", []);
+    if (!items.length) { box.innerHTML = `<p class="kit-empty">Nothing tracked yet — add your first kit item above (food, water tablets, batteries, medicines…).</p>`; return; }
+    const sorted = items.slice().sort((a, b) => (a.e || "9999").localeCompare(b.e || "9999"));
+    box.innerHTML = sorted.map((it, i) => {
+      const d = daysLeft(it.e);
+      let badge = "";
+      if (d === null) badge = `<span class="kit-badge ok">no date</span>`;
+      else if (d < 0) badge = `<span class="kit-badge exp">expired ${-d}d ago</span>`;
+      else if (d <= 30) badge = `<span class="kit-badge soon">${d}d left</span>`;
+      else badge = `<span class="kit-badge ok">ok · ${d}d</span>`;
+      const cat = it.c || "Other";
+      return `<div class="kit-item ${d !== null && d < 0 ? "is-exp" : d !== null && d <= 30 ? "is-soon" : ""}">
+        <span class="kit-cat">${cat}</span>
+        <b>${it.n}</b>
+        <span class="kit-date">${it.e}</span>
+        ${badge}
+        <button class="kit-rm" data-i="${i}" aria-label="Remove ${it.n}">✕</button>
+      </div>`;
+    }).join("");
+  }
+  function kitAdd(n, c, e) {
+    const items = store.get("kit", []);
+    items.push({ n: n.trim(), c, e });
+    store.set("kit", items.slice(-100));
+    renderKit();
+  }
+  function kitRemove(idx) {
+    const items = store.get("kit", []);
+    items.splice(idx, 1);
+    store.set("kit", items);
+    renderKit();
+  }
+
   /* ---------- 3-minute evacuation drill ---------- */
   const DRILL_ITEMS = ["Grab your go-bag", "Fill 2 containers with water", "Charge both power banks", "Collect documents pouch + cash", "Switch off main power (practice)", "Move to the safe inner room", "Whistle 3 times (signal practice)"];
   let drillTimer = null, drillEnd = 0;
@@ -223,6 +319,7 @@
       { id: "health", icon: "💊", title: "Health & elderly", tag: "core" },
       { id: "tools", icon: "🛠️", title: "Tools & gear", tag: "core" },
       { id: "gobags", icon: "🎒", title: "Go-bags", tag: "core" },
+      { id: "kit", icon: "🧰", title: "Kit & expiry tracker", tag: "core" },
       { id: "harden", icon: "🏠", title: "Home hardening", tag: "hazard", show: cycloneEmphasis(c) || floodEmphasis(c) },
       { id: "quake", icon: "🪨", title: "Earthquake drill", tag: "hazard", show: c.quake >= 3 },
       { id: "heat", icon: "🌡️", title: "Heatwave", tag: "hazard", show: heatEmphasis(c) },
@@ -430,6 +527,7 @@
           ].map(d => `<div class="diy-card"><img src="assets/${d[3]}.jpg" alt="${d[1]}"><div class="dc-body"><b>${d[1]}</b><span>${d[2]}</span></div></div>`).join("")}
         </div>
         <p class="note">Practice 2 techniques per week — filter + ORS first. Ten minutes of practice beats an hour of reading during a disaster.</p>`,
+      kit: () => kitHTML(),
       shop: () => `
         <p class="note"><b>Quality bar:</b> known brands, 3.8★+, mid-range value picks — no cheap junk. Prices ≈ Aug 2026; always check the live price before buying.</p>
         <div class="buy-wrap">
@@ -492,6 +590,7 @@
     $("tabs").querySelectorAll(".tab").forEach(t => t.onclick = () => showSection(t.dataset.sec));
     showSection(plan.sections[0].id);
     renderProgress();
+    renderAlerts();
   }
 
   function showSection(id) {
@@ -612,10 +711,21 @@
       if (t.closest && t.closest("#drillBtn")) openDrill();
       else if (t.closest && t.closest("#drillClose")) closeDrill();
       else if (t.closest && t.closest("#drillStart")) startDrill();
+      else if (t.closest && t.closest(".kit-rm")) { kitRemove(+t.closest(".kit-rm").dataset.i); }
+    });
+    document.addEventListener("submit", function (e) {
+      if (e.target && e.target.id === "kitForm") {
+        e.preventDefault();
+        const n = $("kitName").value.trim();
+        const c = $("kitCat").value;
+        const ex = $("kitExp").value;
+        if (n && ex) { kitAdd(n, c, ex); $("kitName").value = ""; $("kitExp").value = ""; }
+      }
     });
     if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
       navigator.serviceWorker.register("sw.js").catch(() => {});
     }
+    fetchAlerts();
   }
 
   document.addEventListener("DOMContentLoaded", init);

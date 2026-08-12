@@ -42,6 +42,19 @@ Legend: **P0** shipped · **P1** next · **P2** later. Format: user story → ac
 - [x] Numbered step cards (1–7) with illustrations, 3×2 + full-width final
 - [x] Matches user-provided format sample; vision-QA'd clean at 390 px & 1280 px
 
+### T-RH-204 Kit & expiry tracker (shipped v1.1)
+> As a user, I track what's in my kit and when it expires.
+- [x] Add item (name, category, expiry date) — persisted in localStorage
+- [x] Sorted list with badges: expired / ≤30 days / ok
+- [x] Remove (rotate) item; 100-item cap; honest note about expired ≠ useless
+
+### T-RH-201 IMD live alerts (shipped v1.1)
+> As a user, I see active IMD warnings for my state/city.
+- [x] Official CAP feed (cap-sources.s3.amazonaws.com/in-imd-en/rss.xml, CORS-open) fetched client-side
+- [x] Matches warnings against plan state + city; shows top 2 as a banner above tabs
+- [x] 15-min cache in localStorage; silent graceful fallback offline
+- [ ] (next) district-level matching + severity colours
+
 ---
 
 ## P1 — Next (ready to build)
@@ -69,9 +82,7 @@ Legend: **P0** shipped · **P1** next · **P2** later. Format: user story → ac
 
 ## P2 — Later
 
-### T-RH-201 IMD alert integration
-- Pull IMD district warnings (RSS/API) → banner for user's saved city
-- Rate-limited fetch, cached 15 min, graceful failure
+### T-RH-201 IMD alert integration — ✅ shipped v1.1 (see above)
 
 ### T-RH-202 Offline PWA
 - Service worker caches app shell + data; checklists fully offline; sync n/a (no backend)
@@ -79,8 +90,7 @@ Legend: **P0** shipped · **P1** next · **P2** later. Format: user story → ac
 ### T-RH-203 Community sharing
 - Generate shareable plan link (`#plan/bhubaneswar?prep=started`) + WhatsApp share card
 
-### T-RH-204 Inventory expiry tracker
-- User logs kit items + expiry dates; app reminds (localStorage + periodic check)
+### T-RH-204 Inventory expiry tracker — ✅ shipped v1.1 (see above)
 
 ---
 

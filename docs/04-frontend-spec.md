@@ -23,7 +23,7 @@ Radius: 14 px cards · Shadow: soft layered (`0 1px 2px + 0 8px 24px -12px`).
 2. **Hero** — headline + search box (`#locInput`), suggestions dropdown, 📍 geolocate, generate button
 3. **How it works** — 7 numbered step cards (3×2 grid + full-width final), each: number badge, illustration, bold label, sub-line
 4. **Plan view** (hidden until generation) — city header w/ risk chips → progress bar → horizontal tab chips → active panel
-5. **Panels (21)** — each: title, illustration, intro, interactive checklist, notes box
+5. **Panels (22)** — each: title, illustration, intro, interactive checklist, notes box
 6. **Footer** — 112/1078, disclaimer, sources, version
 
 ## 3. Component inventory
@@ -36,6 +36,8 @@ Radius: 14 px cards · Shadow: soft layered (`0 1px 2px + 0 8px 24px -12px`).
 | Risk chip | colored by level: forest (low) / saffron (med) / wine (high) |
 | Buy table | tier tabs (Essential/Comfort/Pro), rows: item · price ≈ · link (rel=noopener) |
 | Export bar | "Print / PDF" + "Download .md" buttons |
+| Alert banner | live IMD CAP-feed warnings matched to plan state/city; red-tinted, above tabs |
+| Kit form + list | add item (name/category/expiry), sorted badges (expired/soon/ok), remove-to-rotate | |
 
 ## 4. Responsive behavior
 | Breakpoint | Layout |

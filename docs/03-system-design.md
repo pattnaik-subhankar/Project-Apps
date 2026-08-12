@@ -2,7 +2,7 @@
 **ReadyHome India** · Version 1.0 · 2026-08-11
 
 ## 1. System context
-Single-user-per-browser, zero-backend. One logical "system": a static web app. No servers, queues, DBs, or third-party APIs at runtime. Outbound links are the only external dependency (Amazon.in product pages, opened by the user).
+Single-user-per-browser, zero-backend. One logical "system": a static web app. No servers, queues, DBs, or third-party APIs at runtime. Outbound links are the only external dependency at runtime (Amazon.in product pages) plus one read-only feed: the official IMD CAP RSS (cap-sources.s3.amazonaws.com/in-imd-en/rss.xml, CORS `*`, 15-min cached).
 
 ## 2. Component breakdown
 ```
@@ -24,7 +24,8 @@ Single-user-per-browser, zero-backend. One logical "system": a static web app. N
 
 ## 3. Key flows
 ### 3.1 Generate a plan (main path)
-1. User types city OR taps 📍 (geolocation permission)
+1. On load, `fetchAlerts()` pulls the official IMD CAP feed (15-min cache); matching warnings render in the alert slot above the tabs
+2. User types city OR taps 📍 (geolocation permission)
 2. `resolveCity` fuzzy-matches; suggestions render (debounced, ≤6 shown)
 3. On select: `buildPlan(city)` runs synchronously → section list
 4. `render()` builds DOM; first section auto-opens; progress bar recalcs
@@ -45,7 +46,10 @@ Single-user-per-browser, zero-backend. One logical "system": a static web app. N
 |---|---|---|---|
 | City dataset | static `data.js` | JS object, ~46 records × 9 fields | versioned with repo |
 | Checklist state | localStorage | `readyhome_chk_<sectionId>` → `{itemId: bool}` | until user clears |
+| Kit inventory | localStorage | `readyhome_kit` → `[{n,c,e}]` | until user removes |
+| IMD alerts cache | localStorage | `readyhome_alerts` → `{t, list}` (15-min TTL) | refreshed |
 | Last city | localStorage | `readyhome_last_city` | convenience |
+| Last drill | localStorage | `readyhome_last_drill` (ISO date) | until next drill |
 | Nothing else | — | zero PII, zero analytics | — |
 
 ## 5. Consistency & correctness

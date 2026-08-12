@@ -222,6 +222,32 @@ ul.chk { list-style: none; }
 .drill-done { background: var(--forest-soft); color: var(--forest); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; font-size: 13.5px; }
 .drill-start { width: 100%; }
 
+/* live IMD alert banner */
+.alertslot { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.alertbanner { background: #f7e2de; border: 1px solid #e0b4ab; border-left: 4px solid var(--wine); border-radius: 10px; padding: 10px 12px; font-size: 13px; line-height: 1.5; }
+.alertbanner b { color: var(--wine); display: block; }
+.alertbanner span { color: var(--ink-soft); font-size: 12.5px; }
+
+/* kit & expiry tracker */
+.kitbox { display: flex; flex-direction: column; gap: 10px; }
+.kit-form { display: flex; gap: 8px; flex-wrap: wrap; }
+.kit-form input[type="text"], .kit-form input[type="date"] { flex: 2 1 180px; padding: 9px 10px; border: 1px solid var(--line-strong); border-radius: 10px; font-size: 13.5px; background: var(--card); color: var(--ink); }
+.kit-form select { flex: 1 1 110px; padding: 9px 8px; border: 1px solid var(--line-strong); border-radius: 10px; font-size: 13px; background: var(--card); color: var(--ink); }
+.kit-form button { flex: 0 0 auto; }
+.kit-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); font-size: 13.5px; flex-wrap: wrap; }
+.kit-item b { flex: 1 1 160px; }
+.kit-cat { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--ink-faint); background: var(--paper-2); padding: 2px 7px; border-radius: 20px; }
+.kit-date { color: var(--ink-faint); font-size: 12px; }
+.kit-badge { font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
+.kit-badge.exp { background: #f3d9d4; color: var(--wine); }
+.kit-badge.soon { background: var(--saffron-soft); color: #8a5310; }
+.kit-badge.ok { background: var(--forest-soft); color: var(--forest); }
+.kit-item.is-exp { border-color: #d9a89e; background: #fbf0ed; }
+.kit-item.is-soon { border-color: #e8cd9e; background: #fdf6ea; }
+.kit-rm { border: none; background: none; color: var(--ink-faint); font-size: 14px; cursor: pointer; padding: 4px 8px; border-radius: 8px; }
+.kit-rm:hover { background: var(--terra-soft); color: var(--wine); }
+.kit-empty { color: var(--ink-faint); font-size: 13px; padding: 6px 2px; }
+
 /* footer */
 footer {
   margin-top: 60px; border-top: 1px solid var(--line); background: var(--paper-2); padding: 30px 0 36px; font-size: 12.5px; color: var(--ink-faint); line-height: 1.7;
