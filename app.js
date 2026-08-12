@@ -356,9 +356,10 @@
     </div>`;
   }
   function initLeaflet() {
-    if (typeof L === "undefined" || !plan) return;
+    if (!plan) return;
     const el = document.getElementById("leafletMap");
     if (!el || el._leafletInit) return;
+    if (typeof L === "undefined" || typeof L.map !== "function") { setTimeout(initLeaflet, 250); return; } // Leaflet still loading — retry
     const c = plan.city;
     const lat = +el.dataset.lat, lng = +el.dataset.lng;
     const m = L.map(el, { scrollWheelZoom: false }).setView([lat, lng], 12);
