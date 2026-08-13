@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cyclone Scenario Predictor - ReadyHome India</title>
+<meta name="description" content="Paste the latest IMD or JTWC cyclone advisory and get a 3-scenario forecast: landfall window, wind impact, district risk tiers and a T-minus prep countdown. Guidance layer over official warnings.">
+<link rel="stylesheet" href="styles.css">
+<meta name="theme-color" content="#b4501f">
+<style>
+  .scen { max-width: 860px; margin: 0 auto; padding: 30px 18px 60px; }
+  .scen h1 { font-size: 30px; line-height: 1.15; margin: 6px 0 10px; }
+  .scen .kicker { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--terra); font-weight: 700; }
+  .scen .lede { color: var(--ink-soft); font-size: 15px; line-height: 1.6; margin: 0 0 22px; }
+  .science { background: var(--terra-soft); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 16px 18px; font-size: 13.5px; line-height: 1.65; color: var(--ink); margin-bottom: 22px; }
+  .science b { color: var(--terra); }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
+  .panel h2 { font-size: 17px; margin: 0 0 12px; }
+  textarea { width: 100%; min-height: 150px; border: 1px solid var(--line-strong); border-radius: 10px; padding: 12px; font-family: var(--sans); font-size: 13.5px; line-height: 1.55; background: var(--paper-2); color: var(--ink); box-sizing: border-box; resize: vertical; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .btn.solid { background: var(--terra); border-color: var(--terra); color: #fff; }
+  .btn.solid:hover { background: #9a4219; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 6px; }
+  .fact { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .fact .k { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); font-weight: 700; }
+  .fact .v { font-size: 15px; font-weight: 700; margin-top: 3px; color: var(--ink); }
+  .scen-grid { display: grid; gap: 12px; }
+  .scen-card { border: 1px solid var(--line); border-left: 4px solid var(--ocean); border-radius: 12px; background: var(--card); padding: 14px 16px; }
+  .scen-card.hot { border-left-color: var(--wine); }
+  .scen-card.mild { border-left-color: var(--forest); }
+  .scen-card .st { font-weight: 700; font-size: 15px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .scen-card .tag { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .scen-card.hot .tag { background: var(--wine); color: #fff; }
+  .scen-card.mild .tag { background: var(--forest); color: #fff; }
+  .scen-card .st .tag.b { background: var(--ocean); color: #fff; }
+  .scen-card .d { font-size: 13px; color: var(--ink-soft); line-height: 1.6; margin-top: 8px; }
+  .scen-card .d b { color: var(--ink); }
+  .tier-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tier-table th { text-align: left; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); padding: 6px 8px; border-bottom: 1px solid var(--line-strong); }
+  .tier-table td { padding: 7px 8px; border-bottom: 1px solid var(--line); }
+  .pill { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+  .t-extreme { background: var(--wine); color: #fff; }
+  .t-severe { background: var(--terra); color: #fff; }
+  .t-high { background: var(--saffron); color: #fff; }
+  .t-moderate { background: var(--ocean); color: #fff; }
+  .t-watch { background: var(--paper-2); color: var(--ink-soft); }
+  .timeline { display: grid; gap: 10px; }
+  .tl { display: flex; gap: 14px; align-items: flex-start; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .tl .t { font-family: var(--sans); font-weight: 800; font-size: 13px; color: var(--terra); background: var(--terra-soft); border-radius: 9px; padding: 7px 10px; white-space: nowrap; }
+  .tl .x { font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); }
+  .note { font-size: 12px; color: var(--ink-faint); line-height: 1.6; margin-top: 14px; }
+  .err { color: var(--wine); font-size: 13px; margin-top: 10px; font-weight: 600; }
+  .hidden { display: none; }
+  .banner { background: var(--terra); color: #fff; text-align: center; padding: 8px 14px; font-size: 13.5px; }
+  .banner a { color: #fff; font-weight: 700; text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="inner">
+    <div class="brand">
+      <div class="brand-mark">&#127757;</div>
+      <div><div class="brand-name">ReadyHome India</div><div class="brand-sub">Disaster preparedness, personalised</div></div>
+    </div>
+    <nav>
+      <a class="btn ghost" href="index.html">&#8592; Planner</a>
+    </nav>
+  </div>
+</header>
+
+<div class="banner">New: <a href="scenario.html">Cyclone Scenario Predictor</a> · paste any IMD/JTWC advisory, get the 3-scenario outlook + your prep countdown</div>
+
+<main class="scen">
+
+  <div class="kicker">ReadyHome · Scenario module</div>
+  <h1>Cyclone Scenario <span style="color:var(--terra)">Predictor</span></h1>
+  <p class="lede">Paste the latest IMD or JTWC cyclone advisory. The module turns it into a 3-scenario outlook (most likely, stronger &amp; faster, weaker &amp; slower), district-level wind impact tiers, and a T-minus preparation countdown.</p>
+
+  <div class="science">
+    <b>THE SCIENCE:</b> Nature (2026) reports WeatherNext Cyclones, the Google DeepMind + NOAA operational AI model: ensemble forecasts of cyclone track, intensity and size up to 15 days out, with an average of a day or more of lead-time advantage over leading operational models, and accuracy gains comparable to a decade of operational development. Large ensembles capture rare events better. This page applies that mindset, the lead-time advantage and the tail-risk framing on top of official bulletins. It is a readiness layer, not a forecast model.
+  </div>
+
+  <div class="panel">
+    <h2>1 · Paste the latest advisory</h2>
+    <textarea id="bulletin" placeholder="Paste the IMD or JTWC cyclone bulletin text here (or load the demo). Example: Cyclonic Storm 'DANA' over Northwest Bay of Bengal... near latitude 19.2 N and longitude 87.3 E... maximum sustained wind speed 100-110 kmph... likely to move northwestwards and cross Odisha coast during 25 October..."></textarea>
+    <div class="row">
+      <button class="btn solid" id="parseBtn">Parse &amp; run scenarios</button>
+      <button class="btn" id="demoBtn">Load demo · Cyclone Dana 2024</button>
+    </div>
+    <div class="err hidden" id="errBox"></div>
+  </div>
+
+  <div id="results" class="hidden">
+
+    <div class="panel">
+      <h2>2 · Storm facts (parsed)</h2>
+      <div class="facts" id="facts"></div>
+      <div class="note" id="parseNote"></div>
+    </div>
+
+    <div class="panel">
+      <h2>3 · Three scenarios</h2>
+      <div class="note" style="margin-top:0;margin-bottom:12px">Official forecast is the anchor. The spread around it is the ensemble mindset from the paper: the tail cases are where the danger hides.</div>
+      <div class="scen-grid" id="scenarios"></div>
+    </div>
+
+    <div class="panel">
+      <h2>4 · District impact (most-likely scenario)</h2>
+      <div class="note" style="margin-top:0;margin-bottom:12px">Distance from projected landfall against wind-radius rings (64/50/34 kt). Who is inside the dangerous radii, not just the track. This mirrors the paper's "size" prediction.</div>
+      <div style="overflow-x:auto">
+        <table class="tier-table" id="tiers"></table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>5 · Prep countdown</h2>
+      <div class="note" style="margin-top:0;margin-bottom:12px">Lead time is the paper's headline result. Here it becomes a checklist. Times are estimates from the advisory's landfall window.</div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+
+    <div class="note"><b>How to read this:</b> this module parses official bulletins and applies planning logic. It does not run WN-C or any AI forecast model. Wind radii are climatological planning defaults, not model output. IMD, JTWC, NDMA and OSDMA warnings remain authoritative. When in doubt, follow the official order to evacuate.</div>
+
+  </div>
+</main>
+
+<script>
+/* ---------- data: ReadyHome CITIES (same file as planner, embedded for standalone) ---------- */
+const CITIES = [
+  { n: "Bhubaneswar", s: "Odisha", lat: 20.2961, lng: 85.8245, cyc: 3 },
+  { n: "Bhadrak", s: "Odisha", lat: 21.054, lng: 86.516, cyc: 3 },
+  { n: "Kendrapara", s: "Odisha", lat: 20.502, lng: 86.423, cyc: 3 },
+  { n: "Jagatsinghpur", s: "Odisha", lat: 20.266, lng: 86.17, cyc: 3 },
+  { n: "Ganjam", s: "Odisha", lat: 19.36, lng: 84.984, cyc: 3 },
+  { n: "Jajpur", s: "Odisha", lat: 20.848, lng: 86.337, cyc: 2 },
+  { n: "Nayagarh", s: "Odisha", lat: 20.128, lng: 85.095, cyc: 2 },
+  { n: "Mayurbhanj", s: "Odisha", lat: 21.934, lng: 86.732, cyc: 2 },
+  { n: "Dhenkanal", s: "Odisha", lat: 20.657, lng: 85.596, cyc: 2 },
+  { n: "Puri", s: "Odisha", lat: 19.813, lng: 85.831, cyc: 3 },
+  { n: "Cuttack", s: "Odisha", lat: 20.462, lng: 85.883, cyc: 2 },
+  { n: "Khordha", s: "Odisha", lat: 20.183, lng: 85.616, cyc: 2 },
+  { n: "Balasore", s: "Odisha", lat: 21.494, lng: 86.932, cyc: 3 },
+  { n: "Gajapati", s: "Odisha", lat: 18.885, lng: 84.18, cyc: 2 },
+  { n: "Koraput", s: "Odisha", lat: 18.812, lng: 82.712, cyc: 1 },
+  { n: "Rayagada", s: "Odisha", lat: 19.169, lng: 83.416, cyc: 1 },
+  { n: "Kalahandi", s: "Odisha", lat: 19.915, lng: 83.196, cyc: 1 },
+  { n: "Angul", s: "Odisha", lat: 20.841, lng: 85.102, cyc: 1 },
+  { n: "Sambalpur", s: "Odisha", lat: 21.466, lng: 83.982, cyc: 0 },
+  { n: "Sundargarh", s: "Odisha", lat: 22.117, lng: 84.034, cyc: 0 },
+  { n: "Kandhamal", s: "Odisha", lat: 20.458, lng: 84.233, cyc: 1 },
+  { n: "Boudh", s: "Odisha", lat: 20.833, lng: 84.325, cyc: 1 },
+  { n: "Bargarh", s: "Odisha", lat: 21.333, lng: 83.619, cyc: 0 },
+  { n: "Jharsuguda", s: "Odisha", lat: 21.855, lng: 84.008, cyc: 0 },
+  { n: "Deogarh", s: "Odisha", lat: 21.538, lng: 84.733, cyc: 0 },
+  { n: "Sonepur", s: "Odisha", lat: 20.85, lng: 83.916, cyc: 1 },
+  { n: "Nuapada", s: "Odisha", lat: 20.843, lng: 82.53, cyc: 0 },
+  { n: "Nabarangpur", s: "Odisha", lat: 19.233, lng: 82.55, cyc: 0 },
+  { n: "Malkangiri", s: "Odisha", lat: 18.343, lng: 81.895, cyc: 0 }
+];
+
+/* ---------- parser: best-effort IMD / JTWC bulletin ---------- */
+const MONTHS = "january|february|march|april|may|june|july|august|september|october|november|december";
+const DIR = {
+  north: { dlat: 1, dlng: 0 }, south: { dlat: -1, dlng: 0 }, east: { dlat: 0, dlng: 1 }, west: { dlat: 0, dlng: -1 },
+  northeast: { dlat: 0.707, dlng: 0.707 }, northwest: { dlat: 0.707, dlng: -0.707 },
+  southeast: { dlat: -0.707, dlng: 0.707 }, southwest: { dlat: -0.707, dlng: -0.707 }
+};
+function parseBulletin(txt) {
+  const S = { name: null, lat: null, lng: null, windKmph: null, move: null, landfallDate: null, zone: null, raw: txt };
+  const mName = txt.match(/(?:cyclonic storm|cyclone|storm)\s*['"]?\s*([A-Z]{3,8})/i);
+  if (mName) S.name = mName[1].toUpperCase();
+  const mLat = txt.match(/(\d{1,2}(?:\.\d+)?)\s*°?\s*N/i);
+  if (mLat) S.lat = parseFloat(mLat[1]);
+  const mLng = txt.match(/(\d{1,2}(?:\.\d+)?)\s*°?\s*E/i);
+  if (mLng) S.lng = parseFloat(mLng[1]);
+  const mKmph = txt.match(/(\d{2,3})\s*(?:-|to)\s*(\d{2,3})\s*kmph/i);
+  const mKt = txt.match(/(\d{2,3})\s*KT\b/i);
+  if (mKmph) S.windKmph = Math.round((parseInt(mKmph[1]) + parseInt(mKmph[2])) / 2);
+  else if (mKt) S.windKmph = Math.round(parseInt(mKt[1]) * 1.852);
+  const mMov = txt.match(/(north|south|east|west|northwest|northeast|southwest|southeast)\w*wards?/i);
+  if (mMov) S.move = mMov[1].toLowerCase();
+  const mDate = txt.match(/(\d{1,2}(?:st|nd|rd|th)?)\s+(?:of\s+)?(' + MONTHS + ')/i);
+  if (mDate) S.landfallDate = (mDate[1] + " " + mDate[2]).replace(/(st|nd|rd|th)\b/i, "");
+  const mZone = txt.match(/between\s+([A-Z][a-z]+)\s*(?:and|to|&)\s*([A-Z][a-z]+)/i);
+  if (mZone) S.zone = mZone[1] + " and " + mZone[2];
+  return S;
+}
+function imdCategory(kmph) {
+  if (kmph < 31) return "Depression";
+  if (kmph < 50) return "Deep Depression";
+  if (kmph < 62) return "Cyclonic Storm (CS)";
+  if (kmph < 89) return "Severe Cyclonic Storm (SCS)";
+  if (kmph < 118) return "Very Severe Cyclonic Storm (VSCS)";
+  if (kmph < 166) return "Extremely Severe Cyclonic Storm (ESCS)";
+  if (kmph < 221) return "Super Cyclonic Storm (SuCS)";
+  return "Super Cyclonic Storm (SuCS)";
+}
+
+/* ---------- engine ---------- */
+function hav(a, b) {
+  const R = 6371, dLat = (b.lat - a.lat) * Math.PI / 180, dLng = (b.lng - a.lng) * Math.PI / 180;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * Math.PI / 180) * Math.cos(b.lat * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+function project(S, distKm, mult) {
+  const d = DIR[S.move] || DIR.northwest;
+  const latKm = 111, lngKm = 111 * Math.cos((S.lat || 20) * Math.PI / 180);
+  return {
+    lat: S.lat + d.dlat * (distKm * mult) / latKm,
+    lng: S.lng + d.dlng * (distKm * mult) / lngKm
+  };
+}
+function tierFor(d) {
+  if (d < 50) return { t: "Extreme", cls: "t-extreme" };
+  if (d < 95) return { t: "Severe", cls: "t-severe" };
+  if (d < 210) return { t: "High", cls: "t-high" };
+  if (d < 350) return { t: "Moderate", cls: "t-moderate" };
+  return { t: "Watch", cls: "t-watch" };
+}
+function nearestCoast(pt) {
+  let best = null, bd = 1e9;
+  for (const c of CITIES) { if (c.cyc < 2) continue; const d = hav(pt, c); if (d < bd) { bd = d; best = c; } }
+  return best ? { c: best, d: Math.round(bd) } : null;
+}
+
+/* ---------- render ---------- */
+function render(S) {
+  if (!S.lat || !S.lng) { showErr("Could not read a position (latitude/longitude) from the bulletin. Check the text and try again."); return; }
+  if (!S.windKmph) { showErr("Could not read wind speed. IMD format: '100-110 kmph'. JTWC format: '065 KT'."); return; }
+  hideErr();
+  const projDist = 250; // km from current centre to coast, planning default
+  const scens = [
+    { key: "Most likely", cls: "", mult: 1, wind: S.windKmph, hours: 0, note: "Official guidance as parsed from the bulletin." },
+    { key: "Stronger & faster", cls: "hot", mult: 1.3, wind: Math.round(S.windKmph * 1.15), hours: -6, note: "The tail case: stronger winds, earlier landfall. This is the scenario the paper's large ensembles are built to catch." },
+    { key: "Weaker & slower", cls: "mild", mult: 0.7, wind: Math.round(S.windKmph * 0.85), hours: 6, note: "The relief case: weaker winds, delayed landfall. Prepare for it, hope for it." }
+  ];
+  const facts = document.getElementById("facts");
+  facts.innerHTML = [
+    ["Storm", S.name || "Unnamed"],
+    ["Position", S.lat.toFixed(1) + "°N " + S.lng.toFixed(1) + "°E"],
+    ["Max wind", S.windKmph + " kmph"],
+    ["Category", imdCategory(S.windKmph)],
+    ["Movement", (S.move ? S.move[0].toUpperCase() + S.move.slice(1) : "Unknown") + "wards"],
+    ["Landfall", S.landfallDate || "window from bulletin"]
+  ].map(f => `<div class="fact"><div class="k">${f[0]}</div><div class="v">${f[1]}</div></div>`).join("");
+  const parseNote = document.getElementById("parseNote");
+  parseNote.textContent = "Parsed from bulletin" + (S.zone ? " · landfall between " + S.zone : "") + " · verify against the source advisory before acting.";
+
+  const sc = document.getElementById("scenarios");
+  sc.innerHTML = scens.map(s => {
+    const pt = project(S, projDist, s.mult);
+    const near = nearestCoast(pt);
+    const landTxt = S.landfallDate
+      ? (s.hours === 0 ? S.landfallDate : S.landfallDate + (s.hours < 0 ? " (pulled ~6h earlier)" : " (delayed ~6h)"))
+      : "per bulletin";
+    return `<div class="scen-card ${s.cls}">
+      <div class="st"><span>${s.key}</span><span class="tag ${s.cls ? "" : "b"}">${imdCategory(s.wind)}</span></div>
+      <div class="d">
+        <b>Landfall:</b> ${landTxt}${near ? ` · ${near.c.n} area (${near.d} km from coast)` : ""}<br>
+        <b>Winds at landfall:</b> ${s.wind} kmph · <b>Projected centre:</b> ${pt.lat.toFixed(1)}°N ${pt.lng.toFixed(1)}°E<br>
+        ${s.note}
+      </div>
+    </div>`;
+  }).join("");
+
+  // district tiers for most-likely landfall
+  const base = project(S, projDist, 1);
+  const rows = CITIES.map(c => ({ c, d: Math.round(hav(base, c)) })).sort((a, b) => a.d - b.d);
+  const tbl = document.getElementById("tiers");
+  tbl.innerHTML = "<tr><th>District / city</th><th>Distance from landfall</th><th>Wind impact tier</th></tr>" +
+    rows.map(r => {
+      const t = tierFor(r.d);
+      return `<tr><td>${r.c.n}</td><td>${r.d} km</td><td><span class="pill ${t.cls}">${t.t}</span></td></tr>`;
+    }).join("");
+
+  // timeline
+  const tl = document.getElementById("timeline");
+  tl.innerHTML = [
+    ["T-72h", "Papers and medicines in one bag · cash and fuel · family meeting: who does what · shelter route decided"],
+    ["T-48h", "Go-bag packed (7 days) · water at 4 L per person per day · power banks charged · loose roof items tied down"],
+    ["T-24h", "Valuables raised · food cooked for 48 h · phones and lanterns charged · OSDMA and IMD alerts on"],
+    ["T-12h", "Move to shelter if ordered · stay inside, away from glass · emergency numbers visible"]
+  ].map(x => `<div class="tl"><div class="t">${x[0]}</div><div class="x">${x[1]}</div></div>`).join("");
+
+  document.getElementById("results").classList.remove("hidden");
+  document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function showErr(m) { const e = document.getElementById("errBox"); e.textContent = m; e.classList.remove("hidden"); }
+function hideErr() { document.getElementById("errBox").classList.add("hidden"); }
+
+/* ---------- wiring ---------- */
+const DEMO = "Cyclonic Storm 'DANA' over Northwest Bay of Bengal. As per IMD, at 0830 hrs IST of 24th October 2024, the cyclonic storm DANA lay centred over Northwest Bay of Bengal near latitude 19.2 N and longitude 87.3 E, about 90 km southeast of Paradip. Maximum sustained wind speed 100-110 kmph gusting to 120 kmph. It is very likely to move northwestwards and cross Odisha coast between Bhitarkanika and Dhamra during 25th October early morning as a severe cyclonic storm.";
+document.getElementById("demoBtn").addEventListener("click", () => {
+  document.getElementById("bulletin").value = DEMO;
+  render(parseBulletin(DEMO));
+});
+document.getElementById("parseBtn").addEventListener("click", () => {
+  const txt = document.getElementById("bulletin").value.trim();
+  if (!txt) { showErr("Paste a bulletin first, or load the demo."); return; }
+  render(parseBulletin(txt));
+});
+</script>
+</body>
+</html>
