@@ -7,6 +7,7 @@
 <meta name="description" content="Paste the latest IMD or JTWC cyclone advisory and get a 3-scenario forecast: landfall window, wind impact, district risk tiers and a T-minus prep countdown. Guidance layer over official warnings.">
 <link rel="stylesheet" href="styles.css">
 <meta name="theme-color" content="#b4501f">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
 <style>
   .scen { max-width: 860px; margin: 0 auto; padding: 30px 18px 60px; }
   .scen h1 { font-size: 30px; line-height: 1.15; margin: 6px 0 10px; }
@@ -177,9 +178,9 @@ function parseBulletin(txt) {
   const mKt = txt.match(/(\d{2,3})\s*KT\b/i);
   if (mKmph) S.windKmph = Math.round((parseInt(mKmph[1]) + parseInt(mKmph[2])) / 2);
   else if (mKt) S.windKmph = Math.round(parseInt(mKt[1]) * 1.852);
-  const mMov = txt.match(/(north|south|east|west|northwest|northeast|southwest|southeast)\w*wards?/i);
+  const mMov = txt.match(/(northwest|northeast|southwest|southeast|north|south|east|west)\w*wards?/i);
   if (mMov) S.move = mMov[1].toLowerCase();
-  const mDate = txt.match(/(\d{1,2}(?:st|nd|rd|th)?)\s+(?:of\s+)?(' + MONTHS + ')/i);
+  const mDate = txt.match(new RegExp("(\\d{1,2}(?:st|nd|rd|th)?)\\s+(?:of\\s+)?(" + MONTHS + ")", "i"));
   if (mDate) S.landfallDate = (mDate[1] + " " + mDate[2]).replace(/(st|nd|rd|th)\b/i, "");
   const mZone = txt.match(/between\s+([A-Z][a-z]+)\s*(?:and|to|&)\s*([A-Z][a-z]+)/i);
   if (mZone) S.zone = mZone[1] + " and " + mZone[2];
