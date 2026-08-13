@@ -220,7 +220,7 @@ function tierFor(d) {
 }
 function nearestCoast(pt) {
   let best = null, bd = 1e9;
-  for (const c of CITIES) { if (c.cyc < 2) continue; const d = hav(pt, c); if (d < bd) { bd = d; best = c; } }
+  for (const c of CITIES) { if (c.cyc < 3) continue; const d = hav(pt, c); if (d < bd) { bd = d; best = c; } }
   return best ? { c: best, d: Math.round(bd) } : null;
 }
 
