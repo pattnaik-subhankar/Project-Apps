@@ -288,3 +288,38 @@ footer b { color: var(--ink-soft); }
   .tab { display: none; }
   .hidden { display: block !important; }
 }
+
+/* ============ dark theme ============ */
+[data-theme="dark"] {
+  --paper: #15181d; --paper-2: #1b1f26; --card: #20252d;
+  --ink: #eae6de; --ink-soft: #b6b0a4; --ink-faint: #85806f;
+  --line: #2b313b; --line-strong: #3d4551;
+  --terra: #e07b42; --terra-soft: #3a2a1e;
+  --saffron: #eda14e; --saffron-soft: #3b2f1b;
+  --forest: #77b591; --forest-soft: #1f3127;
+  --ocean: #74b8dc; --ocean-soft: #1d2d3a;
+  --wine: #db8383;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.55);
+}
+[data-theme="dark"] body {
+  background: radial-gradient(1200px 500px at 85% -10%, rgba(237,161,78,.08), transparent 60%),
+              radial-gradient(900px 420px at -10% 20%, rgba(224,123,66,.06), transparent 55%), var(--paper);
+}
+[data-theme="dark"] .topbar { background: rgba(21,24,29,.9); }
+[data-theme="dark"] .tab.active { background: var(--terra); color: #15181d; border-color: var(--terra); }
+[data-theme="dark"] .gnum { color: #15181d; }
+[data-theme="dark"] .risk-card.med .rc-lvl { color: var(--saffron); }
+[data-theme="dark"] .callout { border-color: #4a3c22; }
+[data-theme="dark"] .modal { background: rgba(0,0,0,.6); }
+[data-theme="dark"] .alertbanner { background: #33201e; border-color: #5c3530; }
+[data-theme="dark"] .alertbanner.extreme { background: #33201e; border-color: #5c3530; }
+[data-theme="dark"] .alertbanner.high { background: #33241a; border-color: #5c4123; }
+[data-theme="dark"] .alertbanner.med { background: var(--saffron-soft); border-color: #4a3c22; }
+[data-theme="dark"] .alertbanner.info { background: var(--ocean-soft); border-color: #27404f; }
+[data-theme="dark"] .kit-badge.exp { background: #3a2320; color: #e0a09a; }
+[data-theme="dark"] .kit-badge.soon { background: var(--saffron-soft); color: #e0b878; }
+[data-theme="dark"] .kit-item.is-exp { border-color: #5c3530; background: #241a19; }
+[data-theme="dark"] .kit-item.is-soon { border-color: #4a3c22; background: #242019; }
+[data-theme="dark"] .kit-empty, [data-theme="dark"] .price, [data-theme="dark"] .drill-last { color: var(--ink-faint); }
+[data-theme="dark"] .drill-list li:has(input:checked) { background: var(--forest-soft); }
+[data-theme="dark"] .buy-table a.buy:hover { background: #5f9a78; }

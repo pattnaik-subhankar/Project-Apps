@@ -365,7 +365,7 @@
     const c = plan.city;
     const lat = +el.dataset.lat, lng = +el.dataset.lng;
     const m = L.map(el, { scrollWheelZoom: false }).setView([lat, lng], 12);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(m);
+    window._rhTiles=L.tileLayer((document.documentElement.dataset.theme==="dark")?"https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png":"https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap",subdomains:"abcd"}).addTo(m);
     L.marker([lat, lng]).addTo(m).bindPopup("<b>" + c.n + "</b>");
     const pts = (window.SHELTERS || {})[c.n] || [];
     const icons = { "Cyclone shelter": "🔺", "Emergency shelter": "🏠", "Hospital": "🏥", "Fire station": "🚒", "Police": "👮" };
